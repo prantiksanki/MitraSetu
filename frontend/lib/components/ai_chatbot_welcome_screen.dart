@@ -248,12 +248,8 @@ class AiChatbotWelcomeScreen extends StatelessWidget {
                 margin: const EdgeInsets.only(bottom: 16),
                 child: ElevatedButton(
                   onPressed: () {
-                    // Navigate to main app/home screen
-                    Navigator.pushNamedAndRemoveUntil(
-                      context, 
-                      '/home', 
-                      (route) => false,
-                    );
+                    // Navigate to chat screen
+                    Navigator.pushNamed(context, '/chat');
                   },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: const Color(0xFF2D2D2D), // Dark gray
@@ -496,5 +492,3 @@ class PlantPainter extends CustomPainter {
   @override
   bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
 }
-
-

@@ -2,3 +2,4 @@ node_modules
 .env
 dart_tool
 build
+my_role.txt

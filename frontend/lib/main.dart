@@ -3,6 +3,9 @@ import 'package:flutter/material.dart';
 import '../components/mood_check_screen.dart'; // Make sure to create this file with the MoodCheckScreen code
 import '../components/mental_health_welcome_screen.dart'; // Make sure to create this file with the MentalHealthWelcomeScreen code
 import '../components/ai_chatbot_welcome_screen.dart'; // Make sure to create this file with the AiChatbotWelcomeScreen code
+import '../components/chat_screen.dart'; // Make sure to create this file with the ChatScreen code
+
+
 void main() {
   runApp(const MyApp());
 }
@@ -24,6 +27,7 @@ class MyApp extends StatelessWidget {
         '/mood': (context) => const MoodCheckScreen(),
         '/mental-health-welcome': (context) => const MentalHealthWelcomeScreen(),
         '/ai-chatbot-welcome': (context) => const AiChatbotWelcomeScreen(),
+        '/chat': (context) => const ChatScreen(),
       },
     );
   }
