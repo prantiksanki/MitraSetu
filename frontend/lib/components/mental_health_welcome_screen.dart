@@ -103,12 +103,8 @@ class MentalHealthWelcomeScreen extends StatelessWidget {
                 margin: const EdgeInsets.only(bottom: 40),
                 child: ElevatedButton(
                   onPressed: () {
-                    // Navigate to next screen or back to home
-                    Navigator.pushNamedAndRemoveUntil(
-                      context, 
-                      '/home', 
-                      (route) => false,
-                    );
+                    // Navigate to AI chatbot welcome screen
+                    Navigator.pushNamed(context, '/ai-chatbot-welcome');
                   },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: const Color(0xFF2D2D2D), // Dark gray
