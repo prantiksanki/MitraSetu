@@ -36,21 +36,31 @@ router.post("/register", async (req, res) => {
 // Login Route
 router.post("/login", async (req, res) => {
   try {
-    const { username, password } = req.body;
+    // Allow anonymous users to send only isAnonymous=true
+    const { isAnonymous } = req.body || {};
 
-    const user = await userModel.findOne({ username });
-    if (!user) return res.status(400).json({ error: "User not found" });
+    if (isAnonymous) {
+      // accept anonymous users without Auth0 fields
+      const anonymousId = req.body.anonymousId || `anon_${Date.now()}`;
+      console.log('Anonymous login:', anonymousId);
+      return res.status(200).json({ message: 'Anonymous user accepted', anonymousId });
+    }
 
-    const isMatch = await bcrypt.compare(password, user.password);
-    if (!isMatch) return res.status(400).json({ error: "Invalid credentials" });
+    // Expecting Auth0 profile fields from frontend for non-anonymous users
+    const { auth0UserId, email, name, nickname, picture, emailVerified } = req.body || {};
 
-    const token = jwt.sign({ uid: user.uid, username: user.username }, secretkey, {
-      expiresIn: "5h",
-    });
+    if (!auth0UserId || !email) {
+      return res.status(400).json({ error: 'Missing required auth0 user fields' });
+    }
 
-    res.json({ token });
+    console.log('Login payload:', { auth0UserId, email, name, nickname, picture, emailVerified });
+
+    // TODO: lookup or create user in DB using auth0UserId/email
+    // For now just acknowledge receipt
+    return res.status(200).json({ message: 'User data received', auth0UserId, email });
   } catch (err) {
-    res.status(500).json({ error: "Login failed", details: err });
+    console.error('Login route error:', err);
+    return res.status(500).json({ error: 'Internal server error', details: err?.toString() });
   }
 });
 

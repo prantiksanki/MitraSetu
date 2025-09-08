@@ -10,6 +10,10 @@ const app = express() ;
 const PORT = 80 ; 
 
 app.use(cors()) ; 
+// Parse JSON bodies
+app.use(express.json());
+// Optionally parse URL-encoded bodies
+app.use(express.urlencoded({ extended: true }));
 
 
 // DB Connection
