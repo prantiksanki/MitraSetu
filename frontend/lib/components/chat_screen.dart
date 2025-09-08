@@ -18,7 +18,7 @@ class _ChatScreenState extends State<ChatScreen>
   late AnimationController _typingAnimationController;
 
   // Replace with your actual Gemini API key
-  static const String _apiKey = 'AIzaSyBnhCRxOcht3g7S5SdiK_AYqoS1crKhirA';
+  static const String _apiKey = 'gemini_api';
   static const String _apiUrl = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent?key=$_apiKey';
 
   @override
