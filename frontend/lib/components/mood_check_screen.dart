@@ -84,7 +84,7 @@ class _MoodCheckScreenState extends State<MoodCheckScreen> {
         });
         // Navigate to mental health welcome screen after selection
         Future.delayed(const Duration(milliseconds: 300), () {
-          Navigator.pushNamed(context, '/mental-health-welcome');
+          Navigator.pushNamed(context, '/ai-chatbot-welcome');
         });
       },
       child: Container(
