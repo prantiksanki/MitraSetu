@@ -1,49 +1,25 @@
-const express = require("express");
-const mongoose = require("mongoose") ;
-const auth = require("./router/auth") ;
+const express = require('express');
+const connectDB = require('./config/db');
+const cors = require('cors');
+require('dotenv').config();
 
-const bodyParser = require("body-parser") ;
-const cors = require("cors") ;
+const app = express();
 
+// Connect Database
+connectDB();
 
-const app = express() ; 
-const PORT = 80 ; 
+// Init Middleware
+app.use(express.json({ extended: false }));
+app.use(cors());
 
-app.use(cors()) ; 
-// Parse JSON bodies
-app.use(express.json());
-// Optionally parse URL-encoded bodies
-app.use(express.urlencoded({ extended: true }));
+// Define Routes
+app.use('/api/auth', require('./routes/auth'));
+app.use('/api/user', require('./routes/user'));
+app.use('/api/screening', require('./routes/screening'));
+app.use('/api/circle', require('./routes/circle'));
+app.use('/api/chat', require('./routes/chat'));
+app.use('/api/escalate', require('./routes/escalate'));
 
+const PORT = process.env.PORT || 5000;
 
-// DB Connection
-mongoose.connect("mongodb://localhost:27017/mitrasetu")
-.then(() => {
-    console.log("MongoDB connected");
-})
-.catch((err) => {
-    console.error("MongoDB connection error:", err);
-});
-
-
-// router middleware
-
-app.use("/api/auth" , auth) ;
-
-
-
-
-
-
-
-app.get("/", (req, res) =>
-{
-    res.send("Hello World from Backend") ;
-})
-
-
-
-app.listen(PORT, (req, res) =>
-{
-    console.log(`Server is running on port ${PORT}`) ;
-} )
+app.listen(PORT, () => console.log(`Server started on port ${PORT}`));
