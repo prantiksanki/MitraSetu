@@ -1,19 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import '../blocs/chat_bloc.dart';
-import '../screens/chat_screen.dart';
-
-class ChatComponentWrapper extends StatelessWidget {
-  const ChatComponentWrapper({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return BlocProvider.value(
-      value: context.read<ChatBloc>(),
-      child: const ChatScreen(),
-    );
-  }
-}
+import 'dart:convert';
+import 'package:http/http.dart' as http;
 
 class ChatScreen extends StatefulWidget {
   const ChatScreen({super.key});
@@ -31,7 +18,7 @@ class _ChatScreenState extends State<ChatScreen>
   late AnimationController _typingAnimationController;
 
   // Replace with your actual Gemini API key
-  static const String _apiKey = 'key';
+  static const String _apiKey = 'AIzaSyBnhCRxOcht3g7S5SdiK_AYqoS1crKhirA';
   static const String _apiUrl = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent?key=$_apiKey';
 
   @override
