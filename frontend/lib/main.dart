@@ -8,14 +8,14 @@ import 'blocs/chat_bloc.dart';
 import 'blocs/circle_bloc.dart';
 
 // Import your screens
-import '../components/mood_check_screen.dart';
-import '../components/mental_health_welcome_screen.dart';
-import '../components/ai_chatbot_welcome_screen.dart';
-import '../components/chat_screen.dart';
-import '../components/login_screen.dart';
-import '../components/register_screen.dart';
-import '../components/screening_screen.dart';
-import '../components/circles_screen.dart';
+import 'components/mood_check_screen.dart';
+import 'components/mental_health_welcome_screen.dart';
+import 'components/ai_chatbot_welcome_screen.dart';
+import 'components/chat_screen.dart';
+import 'components/login_screen.dart';
+import 'components/register_screen.dart';
+import 'components/screening_screen.dart';
+import 'components/circles_screen.dart';
 
 void main() {
   runApp(const MyApp());

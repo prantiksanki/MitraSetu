@@ -1,6 +1,6 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
-import 'package:mitra_setu/services/storage_service.dart';
+import 'services/storage_service.dart';
 
 class ApiService {
   // IMPORTANT: Replace with your computer's local IP address. Do not use localhost.
