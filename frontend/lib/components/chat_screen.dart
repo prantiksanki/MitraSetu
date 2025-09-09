@@ -1,6 +1,19 @@
 import 'package:flutter/material.dart';
-import 'dart:convert';
-import 'package:http/http.dart' as http;
+import 'package:flutter_bloc/flutter_bloc.dart';
+import '../blocs/chat_bloc.dart';
+import '../screens/chat_screen.dart';
+
+class ChatComponentWrapper extends StatelessWidget {
+  const ChatComponentWrapper({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return BlocProvider.value(
+      value: context.read<ChatBloc>(),
+      child: const ChatScreen(),
+    );
+  }
+}
 
 class ChatScreen extends StatefulWidget {
   const ChatScreen({super.key});
