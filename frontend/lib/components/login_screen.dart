@@ -21,8 +21,8 @@ class _LoginScreenState extends State<LoginScreen> {
     super.initState();
     // Initialize Auth0
     auth0 = Auth0(
-      '', // Replace with your Auth0 domain
-      '', // Replace with your Auth0 client ID
+      'dev-ljypk7slwkrihmjw.us.auth0.com', // Replace with your Auth0 domain
+      'crzP1w5KcjGM0D54CDX075L35PntuWuz', // Replace with your Auth0 client ID
     );
     _checkExistingLogin();
   }
