@@ -30,8 +30,15 @@ class _LoginScreenState extends State<LoginScreen> {
 
   // Check if user is already logged in
   Future<void> _checkExistingLogin() async {
-    // Credentials manager is not implemented on web for this plugin.
-    if (kIsWeb) return;
+    if (kIsWeb) {
+      // Use Auth0 SPA SDK for web
+      try {
+        await _initializeAuth0Web();
+      } catch (e) {
+        print('Error initializing web auth: $e');
+      }
+      return;
+    }
 
     try {
       final credentials = await auth0.credentialsManager.credentials();
@@ -39,9 +46,48 @@ class _LoginScreenState extends State<LoginScreen> {
       setState(() {
         _user = userProfile;
       });
+      await _sendUserDataToBackend(
+        isAnonymous: false,
+        isMentor: false, // Default to false, update based on your logic
+        user: userProfile,
+      );
     } catch (e) {
-      // User not logged in or plugin unavailable
       print('No existing login: $e');
+    }
+  }
+
+  Future<void> _initializeAuth0Web() async {
+    // Initialize Auth0 SPA SDK for web
+    try {
+      // Web-specific authentication code here
+      // This will be handled by the Auth0 SPA SDK loaded in index.html
+      final anonymousId = 'anon_${DateTime.now().millisecondsSinceEpoch}';
+      final response = await http.post(
+        Uri.parse('http://localhost:5000/api/auth/login'),
+        headers: {'Content-Type': 'application/json'},
+        body: json.encode({
+          'isAnonymous': true,
+          'anonymousId': anonymousId,
+        }),
+      );
+
+      if (response.statusCode == 200) {
+        setState(() {
+          _user = UserProfile(
+            sub: 'anonymous',
+            name: 'Anonymous User',
+          );
+        });
+        await _sendUserDataToBackend(
+          isAnonymous: true,
+          isMentor: false,
+          user: _user,
+        );
+      } else {
+        throw Exception('Failed to authenticate anonymously');
+      }
+    } catch (e) {
+      print('Web auth error: $e');
     }
   }
 
@@ -56,26 +102,21 @@ class _LoginScreenState extends State<LoginScreen> {
     try {
       final Map<String, dynamic> userData = {
         'isAnonymous': isAnonymous,
-        'isMentor': isMentor,
-        'timestamp': DateTime.now().toIso8601String(),
+        'anonymousId': isAnonymous ? 'anon_${DateTime.now().millisecondsSinceEpoch}' : null,
       };
 
       if (!isAnonymous && user != null) {
         userData.addAll({
           'auth0UserId': user.sub,
-          'email': user.email,
-          'name': user.name,
-          'nickname': user.nickname,
-          'picture': user.pictureUrl.toString(),
-          'emailVerified': user.isEmailVerified,
+          'email': user.email ?? '',
+          'name': user.name ?? '',
+          'nickname': user.nickname ?? '',
+          'picture': user.pictureUrl?.toString(),
+          'emailVerified': user.isEmailVerified ?? false,
         });
-      } else {
-        // Generate anonymous user ID
-        userData['anonymousId'] = 'anon_${DateTime.now().millisecondsSinceEpoch}';
       }
 
-      // Replace with your actual backend URL
-      const String backendUrl = 'http://localhost:80/api/auth/login';
+      const String backendUrl = 'http://localhost:5000/api/auth/login';
       
       final response = await http.post(
         Uri.parse(backendUrl),
