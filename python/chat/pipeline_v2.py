@@ -1,7 +1,3 @@
-# %% [code]
-!pip install -q transformers datasets evaluate accelerate
-
-# %% [code]
 import os
 import json
 import torch
