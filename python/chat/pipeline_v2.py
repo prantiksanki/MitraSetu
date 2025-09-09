@@ -24,10 +24,10 @@ seed = 42
 
 # ---- 1) Load + combine CSVs ----
 files = [
-    "/kaggle/input/reddit-mental-health-dataset/Original Reddit Data/Labelled Data/LD DA 1.csv",
-    "/kaggle/input/reddit-mental-health-dataset/Original Reddit Data/Labelled Data/LD EL1.csv",
-    "/kaggle/input/reddit-mental-health-dataset/Original Reddit Data/Labelled Data/LD PF1.csv",
-    "/kaggle/input/reddit-mental-health-dataset/Original Reddit Data/Labelled Data/LD TS 1.csv"
+    "data path/reddit-mental-health-dataset/Original Reddit Data/Labelled Data/LD DA 1.csv",
+    "data path/reddit-mental-health-dataset/Original Reddit Data/Labelled Data/LD EL1.csv",
+    "data path/reddit-mental-health-dataset/Original Reddit Data/Labelled Data/LD PF1.csv",
+    "data path/reddit-mental-health-dataset/Original Reddit Data/Labelled Data/LD TS 1.csv"
 ]
 dfs = [pd.read_csv(p) for p in files]
 df = pd.concat(dfs, ignore_index=True)
