@@ -5,31 +5,23 @@ import EmojiPicker from './EmojiPicker';
 
 const socket = io('http://localhost:5000');
 
-interface Message {
-  text: string;
-  sender: string;
-  role: 'mentor' | 'user';
-  timestamp: string;
-  system?: boolean;
-}
-
 export default function Chat() {
-  const [messages, setMessages] = useState<Message[]>([]);
+  const [messages, setMessages] = useState([]);
   const [input, setInput] = useState('');
   const [onlineUsers, setOnlineUsers] = useState(0);
-  const [userRole, setUserRole] = useState<'mentor' | 'user'>('user');
+  const [userRole, setUserRole] = useState('user');
   const [username, setUsername] = useState('');
   const [isJoined, setIsJoined] = useState(false);
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
-  const messagesEndRef = useRef<HTMLDivElement>(null);
-  const emojiPickerRef = useRef<HTMLDivElement>(null);
+  const messagesEndRef = useRef(null);
+  const emojiPickerRef = useRef(null);
 
   useEffect(() => {
-    socket.on('chat_message', (msg: Message) => {
+    socket.on('chat_message', (msg) => {
       setMessages((prev) => [...prev, msg]);
     });
 
-    socket.on('user_joined', (data: { message: string; count: number }) => {
+    socket.on('user_joined', (data) => {
       setMessages((prev) => [...prev, { 
         text: data.message, 
         sender: 'System', 
@@ -40,7 +32,7 @@ export default function Chat() {
       setOnlineUsers(data.count);
     });
 
-    socket.on('user_left', (data: { message: string; count: number }) => {
+    socket.on('user_left', (data) => {
       setMessages((prev) => [...prev, { 
         text: data.message, 
         sender: 'System', 
@@ -51,12 +43,12 @@ export default function Chat() {
       setOnlineUsers(data.count);
     });
 
-    socket.on('room_full', (msg: string) => {
+    socket.on('room_full', (msg) => {
       alert(msg);
       socket.disconnect();
     });
 
-    socket.on('online_count', (count: number) => {
+    socket.on('online_count', (count) => {
       setOnlineUsers(count);
     });
 
@@ -74,8 +66,8 @@ export default function Chat() {
   }, [messages]);
 
   useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (emojiPickerRef.current && !emojiPickerRef.current.contains(event.target as Node)) {
+    const handleClickOutside = (event) => {
+      if (emojiPickerRef.current && !emojiPickerRef.current.contains(event.target)) {
         setShowEmojiPicker(false);
       }
     };
@@ -110,7 +102,7 @@ export default function Chat() {
     setShowEmojiPicker(false);
   };
 
-  const formatTime = (timestamp: string) => {
+  const formatTime = (timestamp) => {
     return new Date(timestamp).toLocaleTimeString([], { 
       hour: '2-digit', 
       minute: '2-digit' 
