@@ -1,20 +1,24 @@
 import React, { useRef } from 'react';
 import { motion, useInView } from 'framer-motion';
 import { Mail, Phone, MapPin, Send } from 'lucide-react';
+import Section3DCanvas from './Section3DCanvas';
 
-const Contact = () => {
+const Contact = ({ scrollY = 0 }) => {
   const ref = useRef(null);
   const isInView = useInView(ref, { once: true, margin: '-100px' });
 
   return (
     <section id="contact" ref={ref} className="relative py-24 overflow-hidden bg-white">
+      {/* 3D Background */}
+      <Section3DCanvas type="sphere" color="#5f7fff" style={{ opacity: 0.18 }} scrollY={scrollY} />
       <div className="absolute inset-0 bg-gradient-to-br from-blue-50/50 to-purple-50/50"></div>
       
       <div className="relative px-4 mx-auto max-w-7xl sm:px-6 lg:px-8">
         <motion.div
-          initial={{ opacity: 0, y: 50 }}
-          animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 50 }}
-          transition={{ duration: 0.8 }}
+          initial={{ opacity: 0, y: 60 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8, ease: 'easeOut' }}
+          viewport={{ amount: 0.1 }}
           className="mb-16 text-center"
         >
           <h2 className="mb-6 text-4xl font-bold text-gray-900 sm:text-5xl lg:text-6xl">
@@ -31,9 +35,10 @@ const Contact = () => {
         <div className="grid grid-cols-1 gap-12 lg:grid-cols-2">
           {/* Contact Form */}
           <motion.div
-            initial={{ opacity: 0, x: -50 }}
-            animate={isInView ? { opacity: 1, x: 0 } : { opacity: 0, x: -50 }}
-            transition={{ duration: 0.8, delay: 0.2 }}
+            initial={{ opacity: 0, x: -80 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.7, delay: 0.2, ease: 'easeOut' }}
+            viewport={{ amount: 0.1 }}
             className="p-8 border shadow-lg bg-white/80 backdrop-blur-sm rounded-3xl border-white/50"
           >
             <h3 className="mb-8 text-2xl font-bold text-gray-900">Send us a message</h3>
@@ -96,9 +101,10 @@ const Contact = () => {
 
           {/* Contact Information */}
           <motion.div
-            initial={{ opacity: 0, x: 50 }}
-            animate={isInView ? { opacity: 1, x: 0 } : { opacity: 0, x: 50 }}
-            transition={{ duration: 0.8, delay: 0.4 }}
+            initial={{ opacity: 0, x: 80 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.7, delay: 0.4, ease: 'easeOut' }}
+            viewport={{ amount: 0.1 }}
             className="space-y-8"
           >
             <div className="p-8 text-white bg-gradient-to-br from-blue-600 to-purple-600 rounded-3xl">

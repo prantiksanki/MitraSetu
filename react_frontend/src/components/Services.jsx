@@ -1,8 +1,9 @@
 import React, { useRef } from 'react';
 import { motion, useInView } from 'framer-motion';
 import { Network, MessageSquare, Calendar, BarChart3 } from 'lucide-react';
+import Section3DCanvas from './Section3DCanvas';
 
-const Services = () => {
+const Services = ({ scrollY = 0 }) => {
   const ref = useRef(null);
   const isInView = useInView(ref, { once: true, margin: '-100px' });
 
@@ -35,6 +36,8 @@ const Services = () => {
 
   return (
     <section id="services" ref={ref} className="relative py-24 overflow-hidden bg-gradient-to-br from-slate-50 to-blue-50">
+      {/* 3D Background */}
+      <Section3DCanvas type="box" color="#ff5f7f" style={{ opacity: 0.22 }} scrollY={scrollY} />
       <div className="absolute inset-0">
         <div className="absolute top-0 bg-purple-300 rounded-full -left-4 w-72 h-72 mix-blend-multiply filter blur-xl opacity-20 animate-pulse"></div>
         <div className="absolute top-0 bg-blue-300 rounded-full -right-4 w-72 h-72 mix-blend-multiply filter blur-xl opacity-20 animate-pulse animation-delay-2000"></div>
@@ -43,9 +46,10 @@ const Services = () => {
       
       <div className="relative px-4 mx-auto max-w-7xl sm:px-6 lg:px-8">
         <motion.div
-          initial={{ opacity: 0, y: 50 }}
-          animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 50 }}
-          transition={{ duration: 0.8 }}
+          initial={{ opacity: 0, y: 60 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8, ease: 'easeOut' }}
+          viewport={{ amount: 0.1 }}
           className="mb-20 text-center"
         >
           <h2 className="mb-6 text-4xl font-bold text-gray-900 sm:text-5xl lg:text-6xl">
@@ -63,9 +67,10 @@ const Services = () => {
           {services.map((service, index) => (
             <motion.div
               key={index}
-              initial={{ opacity: 0, x: index % 2 === 0 ? -50 : 50 }}
-              animate={isInView ? { opacity: 1, x: 0 } : { opacity: 0, x: index % 2 === 0 ? -50 : 50 }}
-              transition={{ duration: 0.8, delay: index * 0.2 }}
+              initial={{ opacity: 0, x: index % 2 === 0 ? -80 : 80 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.7, delay: index * 0.2, ease: 'easeOut' }}
+              viewport={{ amount: 0.1 }}
               className="p-8 transition-all duration-500 transform border shadow-lg group bg-white/80 backdrop-blur-sm rounded-3xl hover:shadow-2xl hover:scale-105 border-white/50"
             >
               <div className="flex items-start space-x-6">

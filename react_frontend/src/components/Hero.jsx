@@ -5,8 +5,11 @@ import { motion } from 'framer-motion';
 import { ArrowRight, Star } from 'lucide-react';
 import ParticleField from './ParticleField';
 import FloatingShapes from './FloatingShapes';
+import {useNavigate} from 'react-router-dom'
 
 const Hero = () => {
+
+  const navigate=useNavigate()
   return (
     <section id="home" className="relative flex items-center justify-center min-h-screen overflow-hidden">
       {/* 3D Background */}
@@ -72,10 +75,19 @@ const Hero = () => {
             transition={{ duration: 1, delay: 0.7 }}
             className="flex flex-col items-center justify-center gap-4 pt-4 sm:flex-row"
           >
-            <button className="flex items-center px-8 py-4 text-lg font-semibold text-white transition-all duration-300 transform rounded-full group bg-gradient-to-r from-blue-600 to-purple-600 hover:shadow-2xl hover:shadow-blue-500/25 hover:scale-105">
-              Get Started
-              <ArrowRight className="ml-2 transition-transform duration-300 group-hover:translate-x-1" size={20} />
-            </button>
+           <button
+            className="flex items-center px-8 py-4 text-lg font-semibold text-white transition-all duration-300 transform rounded-full group bg-gradient-to-r from-blue-600 to-purple-600 hover:shadow-2xl hover:shadow-blue-500/25 hover:scale-105"
+            onClick={() => {
+              navigate('/auth');
+            }}
+          >
+            Get Started
+            <ArrowRight
+              className="ml-2 transition-transform duration-300 group-hover:translate-x-1"
+              size={20}
+            />
+          </button>
+
             <button className="px-8 py-4 text-lg font-semibold text-gray-700 transition-all duration-300 transform border border-gray-200 rounded-full bg-white/80 backdrop-blur-sm hover:bg-white hover:shadow-xl hover:scale-105">
               Learn More
             </button>
