@@ -1,13 +1,26 @@
 import 'package:flutter/material.dart';
+import 'package:firebase_core/firebase_core.dart';
+// TODO: Generate this file via `flutterfire configure` and adjust import path if different.
+// import 'firebase_options.dart';
 
 // Import your screens
 import '../components/mood_check_screen.dart';
 import '../components/mental_health_welcome_screen.dart';
 import '../components/ai_chatbot_welcome_screen.dart';
 import '../components/chat_screen.dart';
+import 'components/interactive_chat.dart';
 import '../components/login_screen.dart';
 
-void main() {
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  try {
+    // If firebase_options.dart exists, use DefaultFirebaseOptions.currentPlatform
+    // await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+    await Firebase.initializeApp();
+  } catch (e) {
+    // Fallback / log (avoid crash if double init in hot restart)
+    debugPrint('Firebase init error: $e');
+  }
   runApp(const MyApp());
 }
 
@@ -45,6 +58,7 @@ class MyApp extends StatelessWidget {
         '/landing': (context) => const MentalHealthWelcomeScreen(),
         '/ai-chatbot-welcome': (context) => const AiChatbotWelcomeScreen(),
         '/chat': (context) => const ChatScreen(),
+  '/interactiveChat': (context) => const InteractiveChatScreen(),
       },
     );
   }
