@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Heart, MessageCircle, Users, TrendingUp, Flame, Sparkles, ChevronRight, Star, Calendar, Award } from 'lucide-react';
+import {useNavigate} from 'react-router-dom';
 
 export const MentalHealthHome = () => {
   const [selectedMood, setSelectedMood] = useState(null);
@@ -12,6 +13,8 @@ export const MentalHealthHome = () => {
   const [notifications, setNotifications] = useState(3);
   const [currentTime, setCurrentTime] = useState(new Date());
   const [hoveredCard, setHoveredCard] = useState(null);
+
+  const navigate=useNavigate(); 
 
   const moods = [
     { emoji: '😊', label: 'Excellent', color: 'bg-green-500', shadow: 'shadow-green-200' },
@@ -270,49 +273,70 @@ export const MentalHealthHome = () => {
 
         {/* Interactive Chat Options */}
         <div className="grid gap-6 mb-8 md:grid-cols-3">
-          <div 
-            className="p-6 transition-all duration-300 bg-white border border-gray-100 shadow-lg cursor-pointer group rounded-2xl hover:shadow-xl hover:-translate-y-1"
-            onClick={() => handleChatClick('AI')}
-            onMouseEnter={() => setHoveredCard('ai')}
-            onMouseLeave={() => setHoveredCard(null)}
-          >
-            <div className="flex items-center justify-between mb-4">
-              <div className="flex items-center justify-center w-12 h-12 shadow-lg bg-gradient-to-r from-blue-500 to-cyan-500 rounded-xl">
-                <MessageCircle className="w-6 h-6 text-white" />
-              </div>
-              <ChevronRight className={`w-5 h-5 text-gray-400 transition-transform ${hoveredCard === 'ai' ? 'translate-x-1' : ''}`} />
-            </div>
-            <h3 className="mb-2 text-lg font-semibold text-gray-800">AI Assistant</h3>
-            <p className="mb-4 text-sm text-gray-600">Available 24/7 for support and guidance</p>
-            <div className="flex items-center justify-between">
-              <span className="px-2 py-1 text-xs font-medium text-green-600 bg-green-100 rounded-full">Online</span>
-              <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
-            </div>
-          </div>
+ <div
+      className="p-6 transition-all duration-300 bg-white border border-gray-100 shadow-lg cursor-pointer group rounded-2xl hover:shadow-xl hover:-translate-y-1"
+      onClick={() => navigate("/journey")}
+      onMouseEnter={() => setHoveredCard("ai")}
+      onMouseLeave={() => setHoveredCard(null)}
+    >
+      <div className="flex items-center justify-between mb-4">
+        <div className="flex items-center justify-center w-12 h-12 shadow-lg bg-gradient-to-r from-blue-500 to-cyan-500 rounded-xl">
+          <MessageCircle className="w-6 h-6 text-white" />
+        </div>
+        <ChevronRight
+          className={`w-5 h-5 text-gray-400 transition-transform ${
+            hoveredCard === "ai" ? "translate-x-1" : ""
+          }`}
+        />
+      </div>
+      <h3 className="mb-2 text-lg font-semibold text-gray-800">
+        AI Assistant
+      </h3>
+      <p className="mb-4 text-sm text-gray-600">
+        Available 24/7 for support and guidance
+      </p>
+      <div className="flex items-center justify-between">
+        <span className="px-2 py-1 text-xs font-medium text-green-600 bg-green-100 rounded-full">
+          Online
+        </span>
+        <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
+      </div>
+    </div>
 
-          <div 
-            className="p-6 transition-all duration-300 bg-white border border-gray-100 shadow-lg cursor-pointer group rounded-2xl hover:shadow-xl hover:-translate-y-1"
-            onClick={() => handleChatClick('Peer')}
-            onMouseEnter={() => setHoveredCard('peer')}
-            onMouseLeave={() => setHoveredCard(null)}
-          >
-            <div className="flex items-center justify-between mb-4">
-              <div className="flex items-center justify-center w-12 h-12 shadow-lg bg-gradient-to-r from-green-500 to-emerald-500 rounded-xl">
-                <Users className="w-6 h-6 text-white" />
-              </div>
-              <ChevronRight className={`w-5 h-5 text-gray-400 transition-transform ${hoveredCard === 'peer' ? 'translate-x-1' : ''}`} />
-            </div>
-            <h3 className="mb-2 text-lg font-semibold text-gray-800">Peer Support</h3>
-            <p className="mb-4 text-sm text-gray-600">Connect with others on similar journeys</p>
-            <div className="flex items-center justify-between">
-              <span className="px-2 py-1 text-xs font-medium text-blue-600 bg-blue-100 rounded-full">127 online</span>
-              <div className="flex -space-x-1">
-                <div className="w-6 h-6 bg-purple-400 border-2 border-white rounded-full"></div>
-                <div className="w-6 h-6 bg-pink-400 border-2 border-white rounded-full"></div>
-                <div className="w-6 h-6 bg-blue-400 border-2 border-white rounded-full"></div>
-              </div>
-            </div>
-          </div>
+    <div
+      className="p-6 transition-all duration-300 bg-white border border-gray-100 shadow-lg cursor-pointer group rounded-2xl hover:shadow-xl hover:-translate-y-1"
+      onClick={() => navigate("/resources")}
+      onMouseEnter={() => setHoveredCard("peer")}
+      onMouseLeave={() => setHoveredCard(null)}
+    >
+      <div className="flex items-center justify-between mb-4">
+        <div className="flex items-center justify-center w-12 h-12 shadow-lg bg-gradient-to-r from-green-500 to-emerald-500 rounded-xl">
+          <Users className="w-6 h-6 text-white" />
+        </div>
+        <ChevronRight
+          className={`w-5 h-5 text-gray-400 transition-transform ${
+            hoveredCard === "peer" ? "translate-x-1" : ""
+          }`}
+        />
+      </div>
+      <h3 className="mb-2 text-lg font-semibold text-gray-800">
+        Peer Support
+      </h3>
+      <p className="mb-4 text-sm text-gray-600">
+        Connect with others on similar journeys
+      </p>
+      <div className="flex items-center justify-between">
+        <span className="px-2 py-1 text-xs font-medium text-blue-600 bg-blue-100 rounded-full">
+          127 online
+        </span>
+        <div className="flex -space-x-1">
+          <div className="w-6 h-6 bg-purple-400 border-2 border-white rounded-full"></div>
+          <div className="w-6 h-6 bg-pink-400 border-2 border-white rounded-full"></div>
+          <div className="w-6 h-6 bg-blue-400 border-2 border-white rounded-full"></div>
+        </div>
+      </div>
+    </div>
+
 
           <div 
             className="p-6 transition-all duration-300 bg-white border border-gray-100 shadow-lg cursor-pointer group rounded-2xl hover:shadow-xl hover:-translate-y-1"
