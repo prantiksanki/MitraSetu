@@ -1,18 +1,13 @@
-import { useState } from 'react'
-// import reactLogo from './assets/react.svg'
-// import viteLogo from '/vite.svg'
-// import './App.css'
-import {login} from "../components/login"
-import Nav from '../components/nav';
+import React from 'react'
+import { Nav } from '../components/nav'
+import {MentalHealthHome} from '../components/MentalHealthHome'
 
-function Home() {
 
+export default function Home() {
   return (
-    <>
+    <div>
       <Nav/>
-      
-    </>
+      <MentalHealthHome/>
+    </div>
   )
 }
-
-export default auth; 
