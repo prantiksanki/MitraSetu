@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import {AnimatePresence, motion } from 'framer-motion'
 import { Mail, Lock, User, Eye, EyeOff, Router } from 'lucide-react'
 import { useAuth0 } from "@auth0/auth0-react";
@@ -16,18 +16,19 @@ function Login() {
   })
   const navigate = useNavigate();
 
-  const { user, isAuthenticated, isLoading } = useAuth0();
+  const { user, isAuthenticated, isLoading, loginWithRedirect } = useAuth0();
   console.log(user, isAuthenticated, isLoading) ; 
 
-  if(isAuthenticated)
-    {
-      navigate('/home')
-    }
+  // Redirect after auth in effect to avoid setState during render warning
+  useEffect(()=>{
+    if (isAuthenticated) navigate('/home');
+  },[isAuthenticated, navigate]);
 
-  
+  if (isLoading) {
+    return <div className="flex items-center justify-center min-h-screen text-white">Loading…</div>;
+  }
 
-
-    const { loginWithRedirect } = useAuth0();
+  // loginWithRedirect already destructured
 
     // Placeholder for anonymous login handler
     const handleAnonymousLogin = () => {
@@ -214,6 +215,7 @@ function Login() {
                           <input
                             type="text"
                             name="fullName"
+                            autoComplete="name"
                             placeholder="Full Name"
                             value={formData.fullName}
                             onChange={handleInputChange}
@@ -234,6 +236,7 @@ function Login() {
                       <input
                         type="email"
                         name="email"
+                        autoComplete="email"
                         placeholder="Email Address"
                         value={formData.email}
                         onChange={handleInputChange}
@@ -252,6 +255,7 @@ function Login() {
                       <input
                         type={showPassword ? "text" : "password"}
                         name="password"
+                        autoComplete={isLogin ? 'current-password' : 'new-password'}
                         placeholder="Password"
                         value={formData.password}
                         onChange={handleInputChange}
@@ -275,7 +279,7 @@ function Login() {
                       className="flex items-center justify-between"
                     >
                       <label className="flex items-center text-sm cursor-pointer text-white/70">
-                        <input type="checkbox" className="w-4 h-4 mr-2 text-purple-400 rounded border-white/20 bg-white/10 focus:ring-purple-400/50" />
+                        <input type="checkbox" className="w-4 h-4 mr-2 text-purple-400 rounded border-white/20 bg-white/10 focus:ring-purple-400/50" autoComplete="off" />
                         Remember me
                       </label>
                       <button

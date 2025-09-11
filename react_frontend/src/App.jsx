@@ -1,4 +1,4 @@
-import { useState } from 'react'
+// import { useState } from 'react'
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import './App.css'
 // import Auth from './pages/auth'
@@ -7,6 +7,8 @@ import LandingPage from './pages/LandingPage'
 import Home from './pages/Home'
 import ChatPage from './pages/ChatPage'
 import PeerChat from './pages/PeerChat';
+import Landing from './pages/Landing';
+import Onboarding from './pages/onboarding';
 
 
 function App() {
@@ -19,6 +21,7 @@ function App() {
       <Route path="/journey" element={<ChatPage />} />
       <Route path="/resources" element={<PeerChat />} />
   <Route path="/profile" element={<Profile />} />
+  <Route path="/onboarding" element={<Onboarding />} />
   </Routes>
     </Router>
   );
