@@ -451,7 +451,7 @@ export const MentalHealthHome = () => {
         </div>
       </div>
 
-      <style jsx>{`
+  <style>{`
         @keyframes fade-in {
           from { opacity: 0; transform: translate(-50%, -70%) scale(0.8); }
           to { opacity: 1; transform: translate(-50%, -50%) scale(1); }

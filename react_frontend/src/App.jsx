@@ -20,6 +20,7 @@ function App() {
       <Route path="/journey" element={<ChatPage />} />
       <Route path="/resources" element={<PeerChat />} />
       </Routes>
+  {/* Voice launcher moved inside AIAssistant input bar */}
     </Router>
   );
 }
