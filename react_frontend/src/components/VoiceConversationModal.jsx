@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { X, Mic, MicOff, Video, VideoOff, MonitorUp, Bot, AlertCircle } from 'lucide-react';
-import AnimatedAuraOrb from './AnimatedAuraOrb';
+import Orb from './Orb';
 import { useConversation } from '../context/ConversationContext';
 
 // Speech recognition (Web Speech API) wrapper detection
@@ -9,6 +9,14 @@ function getSpeechRecognition() {
   if (!SR) return null;
   const inst = new SR();
   inst.continuous = true;
+  inst.onstart = () => {
+    // Attempt to set document body font color for better contrast when speech recognition starts
+    document.body.style.color = '#22223b'; // dark slate for better contrast
+  };
+  inst.onend = () => {
+    // Optionally reset color when speech recognition ends
+    document.body.style.color = '';
+  };
   inst.interimResults = true;
   inst.lang = 'en-US'; // TODO: dynamic language detection
   return inst;
@@ -139,7 +147,7 @@ export default function VoiceConversationModal({ open, onClose, dark=false }) {
   <div className="relative col-span-2 rounded-3xl bg-white border border-purple-100 shadow-lg flex flex-col overflow-hidden">
           <button onClick={onClose} className="absolute top-3 right-3 p-2 rounded-full bg-white/60 hover:bg-white/80 dark:bg-white/10 dark:hover:bg-white/20 transition"><X className="w-4 h-4"/></button>
           <div className="p-6 flex flex-col items-center gap-6">
-            <AnimatedAuraOrb level={level} accent="#7c3aed" />
+            <Orb size={240} hue={260} hoverIntensity={0.3} forceHoverState={micOn || recognizing} />
             <div className="text-xs uppercase tracking-wider font-medium text-purple-700">{recognizing? 'Listening' : micOn? 'Active Mic' : 'Mic Off'}</div>
             <div className="w-full">
               <div className="text-sm font-semibold mb-2 text-slate-600 dark:text-slate-300">Live Transcript</div>

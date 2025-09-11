@@ -1,6 +1,8 @@
 // Mock Gemini Live client for prototype demos.
 // Simulates connection latency, streaming text tokens, and optional audio chunks.
 
+const silentMock = (import.meta.env.VITE_LIVE_SILENT_MOCK ?? 'true').toString().toLowerCase() === 'true';
+
 export class GeminiLiveMock {
   constructor({ onOpen, onClose, onError, onText, onAudioChunk }) {
     this.onOpen = onOpen; this.onClose = onClose; this.onError = onError; this.onText = onText; this.onAudioChunk = onAudioChunk;
@@ -10,7 +12,8 @@ export class GeminiLiveMock {
     // Simulate network delay
     await new Promise(r=> setTimeout(r, 400));
     this._open = true; this.onOpen && this.onOpen();
-    // Emit a welcome streaming sequence
+    if (silentMock) return; // Do not emit any text in silent mock mode
+    // Otherwise, emit a welcome streaming sequence
     const tokens = [
       'Hi there! ', 'I\'m a simulated realtime companion. ', 'This is a prototype demo ', 'showing how live streaming ', 'responses could appear. ', '\nHow can I support you today?'
     ];

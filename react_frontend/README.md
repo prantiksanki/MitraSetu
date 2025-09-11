@@ -1,3 +1,27 @@
+# Live with Mitra – Gemini Realtime (WebRTC)
+
+This app integrates Gemini Realtime via WebRTC using a server-side SDP offer proxy to keep your API key secure.
+
+Quick notes:
+- Do not put `GEMINI_API_KEY` or `VITE_GEMINI_API_KEY` in the frontend `.env`. Use the server `.env` only.
+- Backend provides `POST /api/gemini/webrtc/offer` which forwards the SDP offer to Google and returns the SDP answer.
+- Frontend posts the local SDP offer to `API_BASE` (configured in `src/config.js`).
+
+Env (server):
+- `GEMINI_API_KEY`=your key (server only)
+- `ALLOWED_ORIGINS`=http://localhost:5173 (and your prod origin)
+- Optional: `GEMINI_REALTIME_MODEL` (default: models/gemini-2.5-flash)
+- Optional: `GEMINI_REALTIME_SDP_URL` to override upstream URL.
+
+Run:
+1. Start backend server (port 5001 default)
+2. Start frontend (Vite dev server)
+3. Open Live page, allow mic/camera, click Connect.
+
+Troubleshooting:
+- 404 on offer: ensure backend is on :5001 and `API_BASE` matches.
+- 401/403: verify `GEMINI_API_KEY` configured server-side and not in browser.
+- No audio: check mic permission, ensure remote audio element is attached.
 # React + Vite
 
 This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.

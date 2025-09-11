@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Users, Send, Smile, ArrowLeft, Copy, Check } from 'lucide-react';
 import EmojiPicker from './EmojiPicker';
+import MarkdownMessage from './MarkdownMessage';
 
 const Chat = ({ socket, roomId, onLeaveRoom }) => {
   const [messages, setMessages] = useState([]);
@@ -300,7 +301,7 @@ const Chat = ({ socket, roomId, onLeaveRoom }) => {
                           : 'bg-[#F8FAFC] text-gray-900 border-gray-200'
                       }`}
                     >
-                      {msg.text}
+                      <MarkdownMessage text={String(msg.text ?? '')} />
                     </div>
                   </div>
                 </div>

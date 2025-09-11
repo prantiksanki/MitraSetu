@@ -1,64 +1,56 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useRef, useEffect } from "react";
 
-/* Futuristic animated aura orb.
-   Renders a canvas with layered radial gradients that subtly move.
-   'level' (0..1) influences pulse radius/intensity.
-*/
-export default function AnimatedAuraOrb({ size = 220, level = 0, accent = '#c6a3ff' }) {
+export default function AnimatedAuraOrb({ level = 0, accent = "#7c3aed" }) {
   const canvasRef = useRef(null);
-  const tRef = useRef(0);
 
-  useEffect(()=>{
+  useEffect(() => {
     const canvas = canvasRef.current;
-    if (!canvas) return;
-    canvas.width = canvas.height = size;
-    const ctx = canvas.getContext('2d');
+    const ctx = canvas.getContext("2d");
     let frame;
+
     const render = () => {
-      tRef.current += 0.015;
-      const t = tRef.current;
-      const w = canvas.width;
-      ctx.clearRect(0,0,w,w);
-      ctx.globalCompositeOperation = 'lighter';
-      const baseR = w * 0.32;
-      const pulse = baseR + Math.sin(t*2) * 6 + level * 28;
+      const w = canvas.width = canvas.offsetWidth;
+      const h = canvas.height = canvas.offsetHeight;
+      ctx.clearRect(0, 0, w, h);
 
-      const accentRGB = '198,163,255'; // from accent hex approximate
-      const gradients = [
-        { colorStops: [[`rgba(${accentRGB},0.06)`,0], [`rgba(${accentRGB},0.22)`,0.55], ['rgba(255,255,255,0)',1]], r: pulse*1.45, ox: Math.sin(t*0.6)*8, oy: Math.cos(t*0.6)*8 },
-        { colorStops: [[`rgba(${accentRGB},0.25)`,0], ['rgba(255,192,203,0.10)',0.55], ['rgba(255,255,255,0)',1]], r: pulse, ox: Math.cos(t*0.8)*10, oy: Math.sin(t*0.8)*10 },
-        { colorStops: [['rgba(255,255,255,0.65)',0], ['rgba(255,255,255,0.05)',1]], r: baseR*0.6 + level*40, ox:0, oy:0 }
-      ];
+      const cx = w / 2;
+      const cy = h / 2;
+      const baseR = Math.min(w, h) * 0.25;
+      const pulse = baseR * (0.15 + level * 0.5);
 
-      gradients.forEach(g => {
-        const grad = ctx.createRadialGradient(w/2+g.ox, w/2+g.oy, 0, w/2+g.ox, w/2+g.oy, g.r);
-        g.colorStops.forEach(cs => grad.addColorStop(cs[1], cs[0]));
-        ctx.fillStyle = grad;
-        ctx.beginPath();
-        ctx.arc(w/2+g.ox, w/2+g.oy, g.r, 0, Math.PI*2);
-        ctx.fill();
-      });
+      // === DARK BACK HALO ===
+      const darkHalo = ctx.createRadialGradient(cx, cy, baseR * 0.5, cx, cy, baseR * 1.6);
+      darkHalo.addColorStop(0, "rgba(0,0,0,0.35)");
+      darkHalo.addColorStop(1, "rgba(0,0,0,0)");
+      ctx.fillStyle = darkHalo;
+      ctx.fillRect(0, 0, w, h);
 
-      // Soft center nucleus
-      const nucleus = ctx.createRadialGradient(w/2, w/2, 0, w/2, w/2, baseR*0.9);
-      nucleus.addColorStop(0, 'rgba(255,255,255,0.85)');
-      nucleus.addColorStop(0.5, 'rgba(255,255,255,0.25)');
-      nucleus.addColorStop(1, 'rgba(255,255,255,0)');
-      ctx.fillStyle = nucleus;
+      // === MAIN ORB ===
+      const orb = ctx.createRadialGradient(cx, cy, 0, cx, cy, baseR + pulse);
+      orb.addColorStop(0, "rgba(255,255,255,0.95)"); // bright white nucleus
+      orb.addColorStop(0.3, `${accent}dd`);          // strong purple core
+      orb.addColorStop(0.7, `${accent}55`);          // soft glow
+      orb.addColorStop(1, "rgba(0,0,0,0)");          // fade out
+      ctx.fillStyle = orb;
       ctx.beginPath();
-      ctx.arc(w/2, w/2, baseR*0.95, 0, Math.PI*2);
+      ctx.arc(cx, cy, baseR + pulse, 0, Math.PI * 2);
+      ctx.fill();
+
+      // === OUTER GLOW RING ===
+      const ring = ctx.createRadialGradient(cx, cy, baseR * 0.9, cx, cy, baseR * 1.8);
+      ring.addColorStop(0, `${accent}44`);
+      ring.addColorStop(1, "rgba(0,0,0,0)");
+      ctx.fillStyle = ring;
+      ctx.beginPath();
+      ctx.arc(cx, cy, baseR * 1.8, 0, Math.PI * 2);
       ctx.fill();
 
       frame = requestAnimationFrame(render);
     };
     render();
-    return () => cancelAnimationFrame(frame);
-  }, [size, level]);
 
-  return (
-    <div style={{width:size,height:size}} className="relative select-none">
-      <canvas ref={canvasRef} className="w-full h-full"/>
-      <div className="absolute inset-0 rounded-full backdrop-blur-md"/>
-    </div>
-  );
+    return () => cancelAnimationFrame(frame);
+  }, [level, accent]);
+
+  return <canvas ref={canvasRef} className="w-40 h-40" />;
 }

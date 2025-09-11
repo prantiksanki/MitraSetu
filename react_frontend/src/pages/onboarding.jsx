@@ -919,7 +919,7 @@ export default function OnboardingFlow({ onComplete, redirectPath = "/home" }) {
             </div>
             <div className="space-y-4 text-center">
               <div className="inline-flex items-center justify-center px-4 py-2 text-sm font-medium text-indigo-800 bg-indigo-100 rounded-full">
-                MitrAI Assistant
+                Metoo Assistant ( MitrAI )
               </div>
               <p className="text-lg font-medium leading-relaxed text-slate-700">
                 {currentStep === 1 &&

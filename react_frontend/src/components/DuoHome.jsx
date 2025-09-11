@@ -235,11 +235,6 @@ export default function DuoHome() {
               />
             </div>
 
-            {/* Live media controls (simple, rich but clean) */}
-            <div id="live" className="mb-6">
-              <SimpleLiveStarter />
-            </div>
-
             {/* Progress moved to right rail */}
           </section>
 
@@ -440,52 +435,6 @@ function PostComposer({ onPost }) {
           Post Tip
         </button>
       </div>
-    </div>
-  )
-}
-
-function SimpleLiveStarter() {
-  const [open, setOpen] = React.useState(false)
-  const videoRef = React.useRef(null)
-  const [mic, setMic] = React.useState(false)
-  const [cam, setCam] = React.useState(false)
-  const [scr, setScr] = React.useState(false)
-  return (
-    <div className="p-6 bg-white border border-gray-200 rounded-2xl">
-      <div className="mb-3 text-lg font-semibold">Live with AI Mitra</div>
-      <p className="mb-4 text-sm text-gray-600">Start a simple live session. You can enable audio, video, or screen share. Opens a clean preview modal.</p>
-      <div className="flex gap-3">
-        <button onClick={()=>setMic(v=>!v)} className={`px-3 py-2 text-sm rounded ${mic? 'bg-green-600 text-white':'bg-gray-100 text-gray-800'}`}>{mic? 'Mic On':'Mic Off'}</button>
-        <button onClick={()=>setCam(v=>!v)} className={`px-3 py-2 text-sm rounded ${cam? 'bg-green-600 text-white':'bg-gray-100 text-gray-800'}`}>{cam? 'Camera On':'Camera Off'}</button>
-        <button onClick={()=>setScr(v=>!v)} className={`px-3 py-2 text-sm rounded ${scr? 'bg-green-600 text-white':'bg-gray-100 text-gray-800'}`}>{scr? 'Sharing':'Share Screen'}</button>
-        <button onClick={()=>setOpen(true)} className="px-4 py-2 ml-auto text-sm font-semibold text-white bg-indigo-600 rounded-md hover:bg-indigo-700">Open Preview</button>
-      </div>
-      {/* Minimal inline modal */}
-      {open && (
-        <div className="fixed inset-0 z-40 flex items-center justify-center">
-          <div className="absolute inset-0 bg-black/40" onClick={()=>setOpen(false)} />
-          <div className="relative w-full max-w-3xl p-4 bg-white border border-gray-200 shadow-xl rounded-2xl">
-            <div className="flex items-center justify-between mb-3">
-              <div className="text-sm font-semibold">Live Session Preview</div>
-              <button onClick={()=>setOpen(false)} className="text-gray-500 hover:text-gray-800">Close</button>
-            </div>
-            <div className="grid gap-4 md:grid-cols-2">
-              <div className="flex items-center justify-center overflow-hidden bg-gray-100 rounded-lg aspect-video">
-                <video ref={videoRef} autoPlay muted playsInline className="object-cover w-full h-full" />
-                {!cam && !scr && <span className="text-xs text-gray-500">Camera / Screen feed</span>}
-              </div>
-              <div className="text-sm text-gray-600">
-                <p className="mb-2">Session settings:</p>
-                <ul className="space-y-1">
-                  <li>Microphone: {mic? 'On':'Off'}</li>
-                  <li>Camera: {cam? 'On':'Off'}</li>
-                  <li>Screen share: {scr? 'On':'Off'}</li>
-                </ul>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
     </div>
   )
 }

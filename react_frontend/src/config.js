@@ -11,8 +11,12 @@ export const AGC_ENABLED = true;  // Auto Gain Control
 export const NS_ENABLED = true;   // Noise Suppression
 
 // Token endpoint for Gemini LiveControls scaffold
-export const LIVE_TOKEN_ENDPOINT = '/api/live/token';
+// Not used with WebRTC flow; kept for compatibility if needed
+export const LIVE_TOKEN_ENDPOINT = '/api/gemini/token';
 
 // Centralized configuration & environment access
-export const API_BASE = import.meta.env.VITE_API_BASE || '';
+// Backend proxy base (must match backend/index.js server port)
+export const API_BASE = 'http://localhost:5000';
+// Optional: override the upstream model for offer proxy if server supports query passthrough
+export const REALTIME_MODEL = 'models/gemini-2.5-flash-preview-native-audio-dialog';
 // Presentation prototype: live WS removed. Keep only API base if needed later.
