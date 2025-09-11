@@ -24,6 +24,18 @@ dependencies:
   shared_preferences: ^2.2.3
   auth0_flutter: ^1.3.0 # Latest version
   js: ^0.6.4 # For JavaScript interop on web
+  # --- Realtime Interactive Chat Additions ---
+  flutter_webrtc: ^1.1.0            # Upgrade for newer API & web fixes (remoteDescription getter)
+  permission_handler: ^10.4.5       # Compatible with current sdk constraints
+  firebase_core: ^3.5.0             # Keep as originally added (resolves to latest 3.x)
+  firebase_auth: ^5.2.0             # Auth for identifying participants
+  cloud_firestore: ^5.4.4           # Signaling (rooms / ICE candidates)
+  firebase_vertexai: ^0.2.1         # Firebase AI (Gemini) - text / multimodal (upgrade later)
+  google_generative_ai: ^0.4.7      # Bumped to satisfy firebase_vertexai transitive constraint (>=0.4.3)
+  web_socket_channel: ^3.0.3        # Updated to align with web ^1.0.0 used by firebase_core_web
+  uuid: ^4.5.0                      # Room / participant IDs
+  collection: ^1.18.0               # Utility helpers
+  stream_transform: ^2.1.0          # Stream utilities for debouncing AI events
 
 dev_dependencies:
   flutter_test:
@@ -37,3 +49,4 @@ flutter:
     - assets/animations/loading.json
     - assets/animations/success.json
     - assets/animations/landing.json
+  # Potential future: add custom sounds / icons for call UI

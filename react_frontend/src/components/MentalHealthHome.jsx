@@ -34,7 +34,7 @@ export const MentalHealthHome = () => {
   ];
 
   const moodData = [
-    { day: 'Mon', mood: 6, color: 'bg-blue-400' },
+    { day: 'Mon', mood: 10, color: 'bg-blue-400' },
     { day: 'Tue', mood: 7, color: 'bg-green-400' },
     { day: 'Wed', mood: 4, color: 'bg-yellow-400' },
     { day: 'Thu', mood: 8, color: 'bg-green-500' },
@@ -451,7 +451,7 @@ export const MentalHealthHome = () => {
         </div>
       </div>
 
-      <style jsx>{`
+  <style>{`
         @keyframes fade-in {
           from { opacity: 0; transform: translate(-50%, -70%) scale(0.8); }
           to { opacity: 1; transform: translate(-50%, -50%) scale(1); }

@@ -1,16 +1,12 @@
-import { useState } from 'react'
-// import reactLogo from './assets/react.svg'
-// import viteLogo from '/vite.svg'
-// import './App.css'
-import {login} from "../components/login"
+import React from 'react'
+import Login from "../components/login"
 
-function auth() {
-
+function Auth() {
   return (
     <>
-      <login/>
+      <Login />
     </>
   )
 }
 
-export default auth; 
+export default Auth

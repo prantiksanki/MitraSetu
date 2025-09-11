@@ -1,32 +1,25 @@
 import React, { useState } from "react";
-import { Send, Bot, User, Heart, Sparkles, Moon, Sun } from "lucide-react";
+import { Send, Bot, User, Sparkles, Moon, Sun, Mic } from "lucide-react";
+import VoiceConversationModal from './VoiceConversationModal';
+import { useConversation } from '../context/ConversationContext';
 
 const GEMINI_API_KEY = import.meta.env.VITE_GEMINI_API_KEY;
 
-export const AIAssistant = () => {
-  const [messages, setMessages] = useState([
-    {
-      id: 1,
-      text: "Hello! I'm here to listen and support you. How are you feeling today?",
-      sender: "ai",
-      timestamp: new Date().toLocaleTimeString(),
-    },
-  ]);
+export const AIAssistant = ({ compact = false }) => {
+  const { messages, addMessage } = useConversation();
   const [inputText, setInputText] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [isDarkMode, setIsDarkMode] = useState(false);
+  // Live media panel collapsed by default (text-first UX)
+  const [voiceOpen, setVoiceOpen] = useState(false);
+
+  // Live / realtime removed for prototype presentation mode. Text chat only.
 
   const sendMessage = async () => {
     if (!inputText.trim()) return;
 
-    const userMessage = {
-      id: Date.now(),
-      text: inputText,
-      sender: "user",
-      timestamp: new Date().toLocaleTimeString(),
-    };
-
-    setMessages((prev) => [...prev, userMessage]);
+  const userMessage = { role: 'user', text: inputText, timestamp: new Date().toLocaleTimeString() };
+  addMessage(userMessage);
     setInputText("");
     setIsLoading(true);
 
@@ -103,25 +96,15 @@ export const AIAssistant = () => {
       console.log("Gemini response:", data);
 
       if (data?.candidates?.[0]?.content?.parts?.[0]?.text) {
-        const aiMessage = {
-          id: Date.now() + 1,
-          text: data.candidates[0].content.parts[0].text,
-          sender: "ai",
-          timestamp: new Date().toLocaleTimeString(),
-        };
-        setMessages((prev) => [...prev, aiMessage]);
+  const aiMessage = { role: 'ai', text: data.candidates[0].content.parts[0].text, timestamp: new Date().toLocaleTimeString() };
+  addMessage(aiMessage);
       } else {
         throw new Error("No valid AI response");
       }
     } catch (error) {
       console.error(error);
-      const errorMessage = {
-        id: Date.now() + 1,
-        text: "I'm sorry, I'm having trouble connecting right now. Please know that your feelings are valid and you're not alone.",
-        sender: "ai",
-        timestamp: new Date().toLocaleTimeString(),
-      };
-      setMessages((prev) => [...prev, errorMessage]);
+  const errorMessage = { role: 'ai', text: "I'm sorry, I'm having trouble connecting right now. Please know that your feelings are valid and you're not alone.", timestamp: new Date().toLocaleTimeString() };
+  addMessage(errorMessage);
     }
 
     setIsLoading(false);
@@ -146,65 +129,50 @@ export const AIAssistant = () => {
     : "bg-gradient-to-br from-blue-50 to-indigo-100 text-gray-800";
 
   return (
-    <div className={`min-h-screen transition-all duration-300 ${themeClasses}`}>
+    <div className={`${compact ? 'w-full' : 'min-h-screen'} transition-all duration-300 ${themeClasses}`}>
       {/* Header */}
-      <div
-        className={`${
-          isDarkMode ? "bg-gray-800 border-gray-700" : "bg-white/80 border-blue-200"
-        } backdrop-blur-sm border-b sticky top-0 z-10`}
-      >
-        <div className="flex items-center justify-between max-w-4xl px-4 py-4 mx-auto">
-          <div className="flex items-center space-x-3">
-            <div
-              className={`p-2 rounded-full ${
-                isDarkMode ? "bg-purple-600" : "bg-blue-500"
-              }`}
-            >
-              <Heart className="w-6 h-6 text-white" />
+      <div className={`${isDarkMode ? "bg-gray-800/95 border-gray-700" : "bg-white/85 border-blue-200"} backdrop-blur border-b sticky top-0 z-20`}> 
+        <div className="max-w-4xl mx-auto px-4 py-3 flex flex-col gap-3">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-4">
+              {/* Avatar removed (live mode). Could place static icon/logo here */}
+              <div>
+                <h1 className="text-xl font-semibold">Caring AI Assistant</h1>
+                <div className="flex items-center gap-2 text-xs">
+                  <span className='text-gray-500'>Text chat mode</span>
+                </div>
+              </div>
             </div>
-            <div>
-              <h1 className="text-xl font-semibold">Caring AI Assistant</h1>
-              <p
-                className={`text-sm ${
-                  isDarkMode ? "text-gray-400" : "text-gray-600"
-                }`}
-              >
-                Here to listen and support you
-              </p>
+            <div className="flex items-center gap-2">
+        {/* Live buttons removed */}
+              <button onClick={() => setIsDarkMode(!isDarkMode)} className={`p-2 rounded-lg transition-colors ${isDarkMode? 'hover:bg-gray-700':'hover:bg-gray-200'}`}>{isDarkMode? <Sun className="w-5 h-5"/>:<Moon className="w-5 h-5"/>}</button>
             </div>
           </div>
-          <button
-            onClick={() => setIsDarkMode(!isDarkMode)}
-            className={`p-2 rounded-lg transition-colors ${
-              isDarkMode ? "hover:bg-gray-700" : "hover:bg-gray-200"
-            }`}
-          >
-            {isDarkMode ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
-          </button>
+      {/* Live controls removed */}
         </div>
       </div>
 
       {/* Chat Container */}
-      <div className="max-w-4xl p-4 pb-32 mx-auto">
+  <div className={`max-w-4xl p-4 ${compact ? 'pb-6' : 'pb-32'} mx-auto`}>
         {/* Messages */}
         <div className="mb-6 space-y-4">
           {messages.map((message) => (
             <div
               key={message.id}
               className={`flex ${
-                message.sender === "user" ? "justify-end" : "justify-start"
+                (message.role || message.sender) === "user" ? "justify-end" : "justify-start"
               }`}
             >
               <div
                 className={`max-w-xs md:max-w-md lg:max-w-lg xl:max-w-xl flex items-start space-x-2 ${
-                  message.sender === "user"
+                  (message.role || message.sender) === "user"
                     ? "flex-row-reverse space-x-reverse"
                     : ""
                 }`}
               >
                 <div
                   className={`p-2 rounded-full flex-shrink-0 ${
-                    message.sender === "user"
+                    (message.role || message.sender) === "user"
                       ? isDarkMode
                         ? "bg-blue-600"
                         : "bg-blue-500"
@@ -213,7 +181,7 @@ export const AIAssistant = () => {
                       : "bg-green-500"
                   }`}
                 >
-                  {message.sender === "user" ? (
+                  {(message.role || message.sender) === "user" ? (
                     <User className="w-4 h-4 text-white" />
                   ) : (
                     <Bot className="w-4 h-4 text-white" />
@@ -221,26 +189,26 @@ export const AIAssistant = () => {
                 </div>
                 <div
                   className={`p-4 rounded-2xl shadow-sm ${
-                    message.sender === "user"
+                    (message.role || message.sender) === "user"
                       ? isDarkMode
                         ? "bg-blue-600 text-white"
                         : "bg-blue-500 text-white"
                       : isDarkMode
                       ? "bg-gray-700 text-gray-100"
                       : "bg-white text-gray-800"
-                  } ${message.sender === "user" ? "rounded-br-md" : "rounded-bl-md"}`}
+                  } ${(message.role || message.sender) === "user" ? "rounded-br-md" : "rounded-bl-md"}`}
                 >
                   <p className="text-sm leading-relaxed">{message.text}</p>
                   <p
                     className={`text-xs mt-2 ${
-                      message.sender === "user"
+                      (message.role || message.sender) === "user"
                         ? "text-blue-100"
                         : isDarkMode
                         ? "text-gray-400"
                         : "text-gray-500"
                     }`}
                   >
-                    {message.timestamp}
+                    {message.timestamp || new Date(message.ts || Date.now()).toLocaleTimeString()}
                   </p>
                 </div>
               </div>
@@ -269,6 +237,8 @@ export const AIAssistant = () => {
             </div>
           )}
         </div>
+
+  {/* Modal handled media; inline panel removed */}
 
         {/* Quick Response Buttons */}
         <div className="mb-6">
@@ -299,13 +269,11 @@ export const AIAssistant = () => {
 
       {/* Input Area */}
       <div
-        className={`fixed bottom-0 left-0 right-0 ${
-          isDarkMode ? "bg-gray-800" : "bg-white/95"
-        } backdrop-blur-sm border-t ${
-          isDarkMode ? "border-gray-700" : "border-gray-200"
-        }`}
+        className={`${compact ? 'relative mt-2 rounded-b-xl' : 'fixed bottom-0 left-0 right-0'} ${
+          isDarkMode ? 'bg-gray-800' : 'bg-white/95'
+        } backdrop-blur-sm border-t ${isDarkMode ? 'border-gray-700' : 'border-gray-200'}`}
       >
-        <div className="max-w-4xl p-4 mx-auto">
+        <div className={`max-w-4xl p-4 mx-auto ${compact ? 'pt-0' : ''}`}>
           <div className="flex space-x-3">
             <textarea
               value={inputText}
@@ -337,6 +305,14 @@ export const AIAssistant = () => {
                 <Send className="w-5 h-5" />
               )}
             </button>
+            <button
+              type="button"
+              onClick={()=> setVoiceOpen(true)}
+              className={`p-4 rounded-2xl transition-colors ${isDarkMode? 'bg-blue-600 hover:bg-blue-500':'bg-blue-500 hover:bg-blue-600'} text-white`}
+              title="Open voice session"
+            >
+              <Mic className="w-5 h-5"/>
+            </button>
           </div>
           <p
             className={`text-xs mt-2 text-center ${
@@ -347,6 +323,7 @@ export const AIAssistant = () => {
           </p>
         </div>
       </div>
+  <VoiceConversationModal open={voiceOpen} onClose={()=> setVoiceOpen(false)} dark={isDarkMode} />
     </div>
   );
 };
