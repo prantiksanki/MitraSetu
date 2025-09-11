@@ -12,7 +12,7 @@ createRoot(document.getElementById('root')).render(
     domain="dev-lm21osyfy12h32np.us.auth0.com"
     clientId="Sv2AIyge8UZ9XsXWCxP6987Ov62YhNWj"
     authorizationParams={{
-      redirect_uri: window.location.origin
+      redirect_uri: `${window.location.origin}/home`
     }}
   >
     <ConversationProvider>
