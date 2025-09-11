@@ -66,7 +66,7 @@ export default function HomePage() {
               <div className="absolute text-2xl select-none left-10 bottom-20 animate-float-fast opacity-60">💜</div>
               <div className="absolute text-2xl select-none right-10 top-24 animate-float-mid opacity-60">✨</div>
               <img
-                src="/mitra.png"
+                src="/Landing.jpg"
                 alt="MitraSetu AI Chat Interface"
                 width={400}
                 height={600}

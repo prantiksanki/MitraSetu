@@ -45,8 +45,8 @@ export default function ProfilePage() {
                   <img src="Profile.png" alt="Profile" className="object-cover w-full h-full rounded-full" />
                 </div>
                 <div className="flex flex-col justify-center min-w-0">
-                      <h1 className="text-2xl font-bold leading-tight text-left text-purple-900 truncate">Aantriksh Sood</h1>
-                      <p className="leading-tight text-left text-purple-600 truncate">Lucknow, Uttar Pradesh, India</p>
+                      <h1 className="text-2xl font-bold leading-tight text-left text-purple-900 truncate">Gold Diggers</h1>
+                      <p className="leading-tight text-left text-purple-600 truncate">UPES, Dehradun, India</p>
                   <div className="flex items-center mt-1 space-x-2">
                     <span className="text-sm text-purple-600">Pronouns:</span>
                     <span className="text-purple-700 border border-purple-300 rounded px-2 py-0.5 text-xs">She/Her</span>

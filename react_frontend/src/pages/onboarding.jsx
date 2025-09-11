@@ -138,14 +138,19 @@ const SUBJECTIVE_PROMPTS = [
 ]
 
 const MOOD_OPTIONS = [
-  { emoji: "😄", label: "Excellent", value: "excellent" },
-  { emoji: "😊", label: "Good", value: "good" },
-  { emoji: "😐", label: "Okay", value: "okay" },
-  { emoji: "😔", label: "Not Great", value: "not-great" },
-  { emoji: "😰", label: "Struggling", value: "struggling" },
+  { emoji: "😄", label: "Excellent", value: "excellent", color: "from-green-400 to-emerald-500" },
+  { emoji: "😊", label: "Good", value: "good", color: "from-blue-400 to-cyan-500" },
+  { emoji: "😐", label: "Okay", value: "okay", color: "from-yellow-400 to-orange-500" },
+  { emoji: "😔", label: "Not Great", value: "not-great", color: "from-orange-400 to-red-500" },
+  { emoji: "😰", label: "Struggling", value: "struggling", color: "from-red-400 to-pink-500" },
 ]
 
-const GENDER_OPTIONS = ["Male", "Female", "Non-binary", "Prefer not to say"]
+const GENDER_OPTIONS = [
+  { label: "Male", icon: "👨" },
+  { label: "Female", icon: "👩" },
+  { label: "Non-binary", icon: "🧑" },
+  { label: "Prefer not to say", icon: "❓" }
+]
 
 function calculateScores(answers) {
   const depressionScore = answers.slice(0, 2).reduce((sum, val) => sum + val, 0)
@@ -162,189 +167,56 @@ function getScoreLabel(score, maxScore) {
   return "Severe"
 }
 
-function MascotWithAnimation({ className = "", staticImageSrc, alt, lottieData }) {
-  const containerRef = useRef(null)
+function MascotWithAnimation({ className = "" }) {
   const [isHovered, setIsHovered] = useState(false)
-  const [lottieInstance, setLottieInstance] = useState(null)
   const [imageError, setImageError] = useState(false)
-  const [showAnimation, setShowAnimation] = useState(false)
-
-  useEffect(() => {
-    let lottie = null
-
-    const loadLottie = async () => {
-      if (typeof window !== "undefined" && lottieData) {
-        try {
-          const lottieWeb = await import("lottie-web")
-          lottie = lottieWeb.default
-
-          if (containerRef.current) {
-            const animation = lottie.loadAnimation({
-              container: containerRef.current,
-              renderer: "svg",
-              loop: true,
-              autoplay: false,
-              animationData: lottieData,
-            })
-
-            setLottieInstance(animation)
-          }
-        } catch (error) {
-          console.log("[v0] Lottie loading failed, using CSS fallback:", error)
-        }
-      }
-    }
-
-    loadLottie()
-
-    return () => {
-      if (lottieInstance) {
-        lottieInstance.destroy()
-      }
-    }
-  }, [lottieData])
-
-  useEffect(() => {
-    if (lottieInstance) {
-      if (isHovered || showAnimation) {
-        lottieInstance.play()
-      } else {
-        lottieInstance.stop()
-      }
-    }
-  }, [isHovered, lottieInstance, showAnimation])
-
-  useEffect(() => {
-    if (lottieInstance) {
-      const timer = setTimeout(() => setShowAnimation(true), 3000);
-      return () => clearTimeout(timer);
-    }
-  }, [lottieInstance])
 
   return (
     <div
-      className={`relative ${className}`}
+      className={`relative ${className} transition-all duration-500 ease-out`}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >
       {!imageError ? (
         <img
           src="/mascot.png"
-          alt={alt}
-          width={208}
-          height={208}
-          className={`w-52 h-52 object-contain drop-shadow-lg transition-all duration-300 ${
-            !lottieData || !lottieInstance
-              ? isHovered
-                ? "animate-bounce scale-105"
-                : "animate-pulse"
-              : (isHovered || showAnimation)
-                ? "opacity-0"
-                : "opacity-100"
+          alt="MitraSetu friendly mascot character"
+          className={`w-48 h-48 object-contain transition-all duration-500 ease-out ${
+            isHovered 
+              ? "scale-110 drop-shadow-2xl" 
+              : "scale-100 drop-shadow-xl hover:animate-pulse"
           }`}
           onError={() => setImageError(true)}
         />
       ) : (
         <div
-          className={`w-52 h-52 bg-gradient-to-br from-purple-400 via-pink-400 to-blue-400 rounded-full flex items-center justify-center drop-shadow-lg transition-all duration-300 ${
-            isHovered ? "animate-bounce scale-105" : "animate-pulse"
+          className={`w-48 h-48 bg-gradient-to-br from-indigo-400 via-purple-400 to-pink-400 rounded-full flex items-center justify-center transition-all duration-500 ease-out ${
+            isHovered ? "scale-110 drop-shadow-2xl rotate-12" : "scale-100 drop-shadow-xl"
           }`}
         >
-          <div className="w-24 h-16 bg-white rounded-lg flex items-center justify-center">
-            <div className="flex space-x-2">
-              <div className="w-3 h-3 bg-gray-800 rounded-full"></div>
-              <div className="w-3 h-3 bg-gray-800 rounded-full"></div>
+          <div className="flex flex-col items-center justify-center p-6 bg-white shadow-lg rounded-2xl">
+            <div className="flex mb-2 space-x-2">
+              <div className="w-3 h-3 rounded-full bg-slate-800 animate-pulse"></div>
+              <div className="w-3 h-3 delay-100 rounded-full bg-slate-800 animate-pulse"></div>
             </div>
-            <div className="w-6 h-1 bg-gray-800 rounded-full mt-2 ml-2"></div>
+            <div className="w-8 h-2 mt-1 rounded-full bg-slate-600"></div>
+            <div className="mt-2 text-xs font-medium text-slate-600">MitrAI</div>
           </div>
         </div>
-      )}
-
-      {lottieData && (
-        <div
-          ref={containerRef}
-          className={`absolute inset-0 w-52 h-52 transition-opacity duration-300 ${
-            (isHovered || showAnimation) && lottieInstance ? "opacity-100" : "opacity-0"
-          }`}
-          style={{ pointerEvents: "none" }}
-        />
       )}
     </div>
   )
 }
 
-export default function OnboardingFlow({ lottieAnimationData, onComplete, redirectPath = "/dashboard" }) {
+export default function OnboardingFlow({ onComplete, redirectPath = "/home" }) {
   const [currentStep, setCurrentStep] = useState(1)
   const [isAnimating, setIsAnimating] = useState(false)
   const [profile, setProfile] = useState({})
   const [objectiveAnswers, setObjectiveAnswers] = useState([])
   const [subjectiveAnswers, setSubjectiveAnswers] = useState([])
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0)
-  const [lottieData, setLottieData] = useState(null)
 
   const totalSteps = 12
-
-  useEffect(() => {
-    const placeholderLottieData = {
-      v: "5.7.4",
-      fr: 30,
-      ip: 0,
-      op: 60,
-      w: 200,
-      h: 200,
-      nm: "Mascot Animation",
-      ddd: 0,
-      assets: [],
-      layers: [
-        {
-          ddd: 0,
-          ind: 1,
-          ty: 4,
-          nm: "Placeholder",
-          sr: 1,
-          ks: {
-            o: { a: 0, k: 100 },
-            r: {
-              a: 1,
-              k: [
-                { i: { x: [0.833], y: [0.833] }, o: { x: [0.167], y: [0.167] }, t: 0, s: [0] },
-                { t: 60, s: [360] },
-              ],
-            },
-            p: { a: 0, k: [100, 100, 0] },
-            a: { a: 0, k: [0, 0, 0] },
-            s: { a: 0, k: [100, 100, 100] },
-          },
-          ao: 0,
-          shapes: [],
-          ip: 0,
-          op: 60,
-          st: 0,
-          bm: 0,
-        },
-      ],
-    }
-
-    fetch("/animations/mascot-hover.json")
-      .then((response) => response.json())
-      .then((data) => {
-        setLottieData(data)
-      })
-      .catch((error) => {
-        console.log("[v0] Using placeholder Lottie data:", error)
-        setLottieData(placeholderLottieData)
-      })
-  }, [])
-
-  useEffect(() => {
-    const existingProfile = localStorage.getItem("userProfile")
-    if (existingProfile) {
-      const parsed = JSON.parse(existingProfile)
-      if (parsed.onboardingComplete) {
-        window.location.href = redirectPath
-      }
-    }
-  }, [redirectPath])
 
   const updateProfile = (updates) => {
     setProfile((prev) => ({ ...prev, ...updates }))
@@ -355,7 +227,7 @@ export default function OnboardingFlow({ lottieAnimationData, onComplete, redire
     setTimeout(() => {
       setCurrentStep((prev) => prev + 1)
       setIsAnimating(false)
-    }, 200)
+    }, 300)
   }
 
   const isStepValid = () => {
@@ -419,7 +291,7 @@ export default function OnboardingFlow({ lottieAnimationData, onComplete, redire
       finalProfile.subjectiveAnswers = subjectiveAnswers
     }
 
-    localStorage.setItem("userProfile", JSON.stringify(finalProfile))
+    // Store in memory instead of localStorage
     onComplete?.(finalProfile)
   }
 
@@ -431,378 +303,343 @@ export default function OnboardingFlow({ lottieAnimationData, onComplete, redire
     updateProfile({ assessmentType: undefined })
   }
 
-  const renderMascotArea = () => {
-    return (
-      <div className="flex-1 bg-gradient-to-br from-purple-50/50 via-white to-blue-50/30 flex items-center justify-center p-12">
-        <div className="w-full max-w-md">
-          <div className="w-full h-64 flex items-center justify-center">
-            <MascotWithAnimation
-              staticImageSrc="/mascot.png"
-              alt="MitraSetu friendly mascot character"
-              lottieData={lottieData}
-              className="cursor-pointer"
-            />
-          </div>
-          <div className="mt-8 text-center">
-            <p className="text-purple-600 text-balance leading-relaxed font-medium">
-              {currentStep === 1 &&
-                "Hi there! I'm MitrAI, here to help you on your mental wellbeing journey with MitraSetu."}
-              {currentStep === 2 && "What should I call you?"}
-              {currentStep === 3 && "Do you have a nickname you prefer?"}
-              {currentStep === 4 && "How do you identify?"}
-              {currentStep === 5 && "Where are you from?"}
-              {currentStep === 6 && "What's your preferred language?"}
-              {currentStep === 7 && "When's your birthday?"}
-              {currentStep === 8 && "How are you feeling today?"}
-              {currentStep === 9 && "Would you like to take a quick mental health assessment?"}
-              {currentStep === 10 && "What type of assessment would you prefer?"}
-              {currentStep === 11 &&
-                profile.assessmentType === "objective" &&
-                "Please answer these questions honestly."}
-              {currentStep === 11 && profile.assessmentType === "subjective" && "Share your thoughts with me."}
-              {currentStep === 12 && "Great! Here's what we learned about you."}
-            </p>
-          </div>
-        </div>
-      </div>
-    )
-  }
-
   const renderStepContent = () => {
-    const baseClasses = "flex-1 flex items-center justify-center p-12"
     const contentClasses = cn(
-      "w-full max-w-lg transition-all duration-300",
-      isAnimating ? "opacity-0 translate-y-4" : "opacity-100 translate-y-0",
+      "transition-all duration-500 ease-out",
+      isAnimating ? "opacity-0 translate-y-8 scale-95" : "opacity-100 translate-y-0 scale-100"
     )
 
     switch (currentStep) {
       case 1:
         return (
-          <div className={baseClasses}>
-            <div className={contentClasses}>
-              <Card className="p-10 text-center border-0 shadow-lg bg-white/90 backdrop-blur-sm">
-                <CardContent className="space-y-8">
-                  <h1 className="text-3xl font-light text-purple-800 text-balance tracking-tight">
-                    Welcome to Your Wellbeing Journey
-                  </h1>
-                  <p className="text-purple-600 text-lg text-balance leading-relaxed">
-                    Let's get to know you better so we can provide personalized support for your mental health.
-                  </p>
-                  <Button
-                    onClick={nextStep}
-                    size="lg"
-                    className="w-full bg-purple-600 hover:bg-purple-700 text-white font-medium py-3 rounded-xl transition-all duration-200"
-                  >
-                    Let's Begin
-                  </Button>
-                </CardContent>
-              </Card>
+          <div className={contentClasses}>
+            <div className="space-y-8 text-center">
+              <div className="space-y-4">
+                <h1 className="text-4xl font-bold text-transparent bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 bg-clip-text">
+                  Welcome to MitraSetu
+                </h1>
+                <p className="max-w-md mx-auto text-xl leading-relaxed text-slate-600">
+                  Your personalized mental wellbeing companion is here to support you every step of the way
+                </p>
+              </div>
+              <Button
+                onClick={nextStep}
+                size="lg"
+                className="px-12 py-4 text-lg font-semibold text-white transition-all duration-300 rounded-full shadow-lg bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-indigo-600 hover:to-purple-700 hover:shadow-xl hover:scale-105"
+              >
+                Let's Get Started
+              </Button>
             </div>
           </div>
         )
 
       case 2:
         return (
-          <div className={baseClasses}>
-            <div className={contentClasses}>
-              <Card className="p-10 border-0 shadow-lg bg-white/90 backdrop-blur-sm">
-                <CardContent className="space-y-8">
-                  <h2 className="text-2xl font-light text-purple-800 text-balance">What should we call you?</h2>
-                  <Input
-                    placeholder="Enter your name"
-                    value={profile.name || ""}
-                    onChange={(e) => updateProfile({ name: e.target.value })}
-                    className="text-lg py-3 border-slate-200 focus:border-purple-400 focus:ring-purple-400/20 rounded-xl"
-                  />
-                  <Button
-                    onClick={nextStep}
-                    disabled={!isStepValid()}
-                    className="w-full bg-purple-600 hover:bg-purple-700 disabled:bg-slate-300 text-white font-medium py-3 rounded-xl transition-all duration-200"
-                  >
-                    Continue
-                  </Button>
-                </CardContent>
-              </Card>
+          <div className={contentClasses}>
+            <div className="space-y-8">
+              <div className="space-y-3 text-center">
+                <h2 className="text-3xl font-bold text-slate-800">What's your name?</h2>
+                <p className="text-slate-600">Let's start with the basics</p>
+              </div>
+              <div className="space-y-6">
+                <Input
+                  placeholder="Enter your full name"
+                  value={profile.name || ""}
+                  onChange={(e) => updateProfile({ name: e.target.value })}
+                  className="text-lg transition-all duration-300 border-2 h-14 border-slate-200 focus:border-indigo-400 focus:ring-indigo-200 rounded-xl"
+                />
+                <Button
+                  onClick={nextStep}
+                  disabled={!isStepValid()}
+                  className="w-full text-lg font-semibold text-white transition-all duration-300 h-14 bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-indigo-600 hover:to-purple-700 disabled:from-slate-300 disabled:to-slate-400 rounded-xl hover:scale-105"
+                >
+                  Continue
+                </Button>
+              </div>
             </div>
           </div>
         )
 
       case 3:
         return (
-          <div className={baseClasses}>
-            <div className={contentClasses}>
-              <Card className="p-10 border-0 shadow-lg bg-white/90 backdrop-blur-sm">
-                <CardContent className="space-y-8">
-                  <h2 className="text-2xl font-light text-purple-800 text-balance">Do you have a nickname?</h2>
-                  <Input
-                    placeholder="Enter your nickname"
-                    value={profile.nickname || ""}
-                    onChange={(e) => updateProfile({ nickname: e.target.value })}
-                    className="text-lg py-3 border-slate-200 focus:border-purple-400 focus:ring-purple-400/20 rounded-xl"
-                  />
-                  <Button
-                    onClick={nextStep}
-                    disabled={!isStepValid()}
-                    className="w-full bg-purple-600 hover:bg-purple-700 disabled:bg-slate-300 text-white font-medium py-3 rounded-xl transition-all duration-200"
-                  >
-                    Continue
-                  </Button>
-                </CardContent>
-              </Card>
+          <div className={contentClasses}>
+            <div className="space-y-8">
+              <div className="space-y-3 text-center">
+                <h2 className="text-3xl font-bold text-slate-800">Any nickname?</h2>
+                <p className="text-slate-600">What would you like me to call you?</p>
+              </div>
+              <div className="space-y-6">
+                <Input
+                  placeholder="Enter your preferred nickname"
+                  value={profile.nickname || ""}
+                  onChange={(e) => updateProfile({ nickname: e.target.value })}
+                  className="text-lg transition-all duration-300 border-2 h-14 border-slate-200 focus:border-indigo-400 focus:ring-indigo-200 rounded-xl"
+                />
+                <Button
+                  onClick={nextStep}
+                  disabled={!isStepValid()}
+                  className="w-full text-lg font-semibold text-white transition-all duration-300 h-14 bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-indigo-600 hover:to-purple-700 disabled:from-slate-300 disabled:to-slate-400 rounded-xl hover:scale-105"
+                >
+                  Continue
+                </Button>
+              </div>
             </div>
           </div>
         )
 
       case 4:
         return (
-          <div className={baseClasses}>
-            <div className={contentClasses}>
-              <Card className="p-10 border-0 shadow-lg bg-white/90 backdrop-blur-sm">
-                <CardContent className="space-y-8">
-                  <h2 className="text-2xl font-light text-purple-800 text-balance">How do you identify?</h2>
-                  <div className="grid grid-cols-1 gap-4">
-                    {GENDER_OPTIONS.map((gender) => (
-                      <Button
-                        key={gender}
-                        variant={profile.gender === gender ? "default" : "outline"}
-                        onClick={() => updateProfile({ gender })}
-                        className={cn(
-                          "justify-start text-left h-auto p-4 rounded-xl font-medium transition-all duration-200",
-                          profile.gender === gender
-                            ? "bg-purple-600 hover:bg-purple-700 text-white"
-                            : "border-slate-200 hover:border-purple-300 hover:bg-purple-50",
-                        )}
-                      >
-                        {gender}
-                      </Button>
-                    ))}
-                  </div>
+          <div className={contentClasses}>
+            <div className="space-y-8">
+              <div className="space-y-3 text-center">
+                <h2 className="text-3xl font-bold text-slate-800">How do you identify?</h2>
+                <p className="text-slate-600">This helps us personalize your experience</p>
+              </div>
+              <div className="grid grid-cols-1 gap-4">
+                {GENDER_OPTIONS.map((gender) => (
                   <Button
-                    onClick={nextStep}
-                    disabled={!isStepValid()}
-                    className="w-full bg-purple-600 hover:bg-purple-700 disabled:bg-slate-300 text-white font-medium py-3 rounded-xl transition-all duration-200"
+                    key={gender.label}
+                    variant={profile.gender === gender.label ? "default" : "outline"}
+                    onClick={() => updateProfile({ gender: gender.label })}
+                    className={cn(
+                      "h-16 justify-start text-left text-lg font-medium rounded-xl transition-all duration-300 hover:scale-105",
+                      profile.gender === gender.label
+                        ? "bg-gradient-to-r from-indigo-500 to-purple-600 text-white shadow-lg"
+                        : "border-2 border-slate-200 hover:border-indigo-300 hover:bg-indigo-50"
+                    )}
                   >
-                    Continue
+                    <span className="mr-4 text-2xl">{gender.icon}</span>
+                    {gender.label}
                   </Button>
-                </CardContent>
-              </Card>
+                ))}
+              </div>
+              <Button
+                onClick={nextStep}
+                disabled={!isStepValid()}
+                className="w-full text-lg font-semibold text-white transition-all duration-300 h-14 bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-indigo-600 hover:to-purple-700 disabled:from-slate-300 disabled:to-slate-400 rounded-xl hover:scale-105"
+              >
+                Continue
+              </Button>
             </div>
           </div>
         )
 
       case 5:
         return (
-          <div className={baseClasses}>
-            <div className={contentClasses}>
-              <Card className="p-10 border-0 shadow-lg bg-white/90 backdrop-blur-sm">
-                <CardContent className="space-y-8">
-                  <h2 className="text-2xl font-light text-purple-800 text-balance">Where are you from?</h2>
-                  <Select onValueChange={(value) => updateProfile({ state: value })}>
-                    <SelectTrigger className="text-lg py-3 border-slate-200 focus:border-purple-400 focus:ring-purple-400/20 rounded-xl">
-                      <SelectValue placeholder="Select your state" />
-                    </SelectTrigger>
-                    <SelectContent className="rounded-xl">
-                      {INDIAN_STATES.map((state) => (
-                        <SelectItem key={state} value={state} className="rounded-lg">
-                          {state}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                  <Button
-                    onClick={nextStep}
-                    disabled={!isStepValid()}
-                    className="w-full bg-purple-600 hover:bg-purple-700 disabled:bg-slate-300 text-white font-medium py-3 rounded-xl transition-all duration-200"
-                  >
-                    Continue
-                  </Button>
-                </CardContent>
-              </Card>
+          <div className={contentClasses}>
+            <div className="space-y-8">
+              <div className="space-y-3 text-center">
+                <h2 className="text-3xl font-bold text-slate-800">Where are you from?</h2>
+                <p className="text-slate-600">Select your state or territory</p>
+              </div>
+              <div className="space-y-6">
+                <Select onValueChange={(value) => updateProfile({ state: value })}>
+                  <SelectTrigger className="text-lg border-2 h-14 border-slate-200 focus:border-indigo-400 focus:ring-indigo-200 rounded-xl">
+                    <SelectValue placeholder="Choose your state" />
+                  </SelectTrigger>
+                  <SelectContent className="rounded-xl">
+                    {INDIAN_STATES.map((state) => (
+                      <SelectItem key={state} value={state} className="py-3 text-base rounded-lg">
+                        {state}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                <Button
+                  onClick={nextStep}
+                  disabled={!isStepValid()}
+                  className="w-full text-lg font-semibold text-white transition-all duration-300 h-14 bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-indigo-600 hover:to-purple-700 disabled:from-slate-300 disabled:to-slate-400 rounded-xl hover:scale-105"
+                >
+                  Continue
+                </Button>
+              </div>
             </div>
           </div>
         )
 
       case 6:
         return (
-          <div className={baseClasses}>
-            <div className={contentClasses}>
-              <Card className="p-10 border-0 shadow-lg bg-white/90 backdrop-blur-sm">
-                <CardContent className="space-y-8">
-                  <h2 className="text-2xl font-light text-purple-800 text-balance">What's your preferred language?</h2>
-                  <Select onValueChange={(value) => updateProfile({ language: value })}>
-                    <SelectTrigger className="text-lg py-3 border-slate-200 focus:border-purple-400 focus:ring-purple-400/20 rounded-xl">
-                      <SelectValue placeholder="Select your language" />
-                    </SelectTrigger>
-                    <SelectContent className="rounded-xl">
-                      {LANGUAGES.map((language) => (
-                        <SelectItem key={language} value={language} className="rounded-lg">
-                          {language}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                  <Button
-                    onClick={nextStep}
-                    disabled={!isStepValid()}
-                    className="w-full bg-purple-600 hover:bg-purple-700 disabled:bg-slate-300 text-white font-medium py-3 rounded-xl transition-all duration-200"
-                  >
-                    Continue
-                  </Button>
-                </CardContent>
-              </Card>
+          <div className={contentClasses}>
+            <div className="space-y-8">
+              <div className="space-y-3 text-center">
+                <h2 className="text-3xl font-bold text-slate-800">Preferred language?</h2>
+                <p className="text-slate-600">We'll communicate in your comfort language</p>
+              </div>
+              <div className="space-y-6">
+                <Select onValueChange={(value) => updateProfile({ language: value })}>
+                  <SelectTrigger className="text-lg border-2 h-14 border-slate-200 focus:border-indigo-400 focus:ring-indigo-200 rounded-xl">
+                    <SelectValue placeholder="Select your language" />
+                  </SelectTrigger>
+                  <SelectContent className="rounded-xl">
+                    {LANGUAGES.map((language) => (
+                      <SelectItem key={language} value={language} className="py-3 text-base rounded-lg">
+                        {language}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                <Button
+                  onClick={nextStep}
+                  disabled={!isStepValid()}
+                  className="w-full text-lg font-semibold text-white transition-all duration-300 h-14 bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-indigo-600 hover:to-purple-700 disabled:from-slate-300 disabled:to-slate-400 rounded-xl hover:scale-105"
+                >
+                  Continue
+                </Button>
+              </div>
             </div>
           </div>
         )
 
       case 7:
         return (
-          <div className={baseClasses}>
-            <div className={contentClasses}>
-              <Card className="p-10 border-0 shadow-lg bg-white/90 backdrop-blur-sm">
-                <CardContent className="space-y-8">
-                  <h2 className="text-2xl font-light text-purple-800 text-balance">When's your birthday?</h2>
-                  <Input
-                    type="date"
-                    value={profile.birthday || ""}
-                    onChange={(e) => updateProfile({ birthday: e.target.value })}
-                    className="text-lg py-3 border-slate-200 focus:border-purple-400 focus:ring-purple-400/20 rounded-xl"
-                  />
-                  <Button
-                    onClick={nextStep}
-                    disabled={!isStepValid()}
-                    className="w-full bg-purple-600 hover:bg-purple-700 disabled:bg-slate-300 text-white font-medium py-3 rounded-xl transition-all duration-200"
-                  >
-                    Continue
-                  </Button>
-                </CardContent>
-              </Card>
+          <div className={contentClasses}>
+            <div className="space-y-8">
+              <div className="space-y-3 text-center">
+                <h2 className="text-3xl font-bold text-slate-800">When's your birthday?</h2>
+                <p className="text-slate-600">We'll send you special wishes</p>
+              </div>
+              <div className="space-y-6">
+                <Input
+                  type="date"
+                  value={profile.birthday || ""}
+                  onChange={(e) => updateProfile({ birthday: e.target.value })}
+                  className="text-lg transition-all duration-300 border-2 h-14 border-slate-200 focus:border-indigo-400 focus:ring-indigo-200 rounded-xl"
+                />
+                <Button
+                  onClick={nextStep}
+                  disabled={!isStepValid()}
+                  className="w-full text-lg font-semibold text-white transition-all duration-300 h-14 bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-indigo-600 hover:to-purple-700 disabled:from-slate-300 disabled:to-slate-400 rounded-xl hover:scale-105"
+                >
+                  Continue
+                </Button>
+              </div>
             </div>
           </div>
         )
 
       case 8:
         return (
-          <div className={baseClasses}>
-            <div className={contentClasses}>
-              <Card className="p-10 border-0 shadow-lg bg-white/90 backdrop-blur-sm">
-                <CardContent className="space-y-8">
-                  <h2 className="text-2xl font-light text-purple-800 text-balance">How are you feeling today?</h2>
-                  <div className="grid grid-cols-1 gap-4">
-                    {MOOD_OPTIONS.map((mood) => (
-                      <Button
-                        key={mood.value}
-                        variant={profile.mood === mood.value ? "default" : "outline"}
-                        onClick={() => updateProfile({ mood: mood.value })}
-                        className={cn(
-                          "justify-start text-left h-auto p-4 rounded-xl font-medium transition-all duration-200",
-                          profile.mood === mood.value
-                            ? "bg-purple-600 hover:bg-purple-700 text-white"
-                            : "border-slate-200 hover:border-purple-300 hover:bg-purple-50",
-                        )}
-                      >
-                        <span className="text-2xl mr-3">{mood.emoji}</span>
-                        {mood.label}
-                      </Button>
-                    ))}
-                  </div>
+          <div className={contentClasses}>
+            <div className="space-y-8">
+              <div className="space-y-3 text-center">
+                <h2 className="text-3xl font-bold text-slate-800">How are you feeling today?</h2>
+                <p className="text-slate-600">Your current mood helps us understand you better</p>
+              </div>
+              <div className="grid grid-cols-1 gap-4">
+                {MOOD_OPTIONS.map((mood) => (
                   <Button
-                    onClick={nextStep}
-                    disabled={!isStepValid()}
-                    className="w-full bg-purple-600 hover:bg-purple-700 disabled:bg-slate-300 text-white font-medium py-3 rounded-xl transition-all duration-200"
+                    key={mood.value}
+                    variant={profile.mood === mood.value ? "default" : "outline"}
+                    onClick={() => updateProfile({ mood: mood.value })}
+                    className={cn(
+                      "h-16 justify-start text-left text-lg font-medium rounded-xl transition-all duration-300 hover:scale-105 group",
+                      profile.mood === mood.value
+                        ? `bg-gradient-to-r ${mood.color} text-white shadow-lg`
+                        : "border-2 border-slate-200 hover:border-indigo-300 hover:bg-indigo-50"
+                    )}
                   >
-                    Continue
+                    <span className="mr-4 text-3xl group-hover:animate-bounce">{mood.emoji}</span>
+                    <div>
+                      <div className="font-semibold">{mood.label}</div>
+                    </div>
                   </Button>
-                </CardContent>
-              </Card>
+                ))}
+              </div>
+              <Button
+                onClick={nextStep}
+                disabled={!isStepValid()}
+                className="w-full text-lg font-semibold text-white transition-all duration-300 h-14 bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-indigo-600 hover:to-purple-700 disabled:from-slate-300 disabled:to-slate-400 rounded-xl hover:scale-105"
+              >
+                Continue
+              </Button>
             </div>
           </div>
         )
 
       case 9:
         return (
-          <div className={baseClasses}>
-            <div className={contentClasses}>
-              <Card className="p-10 border-0 shadow-lg bg-white/90 backdrop-blur-sm">
-                <CardContent className="space-y-8">
-                  <h2 className="text-2xl font-light text-purple-800 text-balance">Mental Health Assessment</h2>
-                  <p className="text-purple-600 text-balance leading-relaxed">
-                    Would you like to take a quick assessment to help us understand your current wellbeing?
-                  </p>
-                  <div className="space-y-4">
-                    <Button
-                      onClick={nextStep}
-                      className="w-full bg-purple-600 hover:bg-purple-700 text-white font-medium py-3 rounded-xl transition-all duration-200"
-                    >
-                      Start Assessment
-                    </Button>
-                    <Button
-                      variant="outline"
-                      onClick={() => {
-                        updateProfile({ onboardingComplete: true })
-                        completeOnboarding()
-                        window.location.href = redirectPath
-                      }}
-                      className="w-full border-slate-200 hover:border-purple-300 hover:bg-purple-50 font-medium py-3 rounded-xl transition-all duration-200 bg-transparent"
-                    >
-                      Maybe Later
-                    </Button>
-                  </div>
-                </CardContent>
-              </Card>
+          <div className={contentClasses}>
+            <div className="space-y-8">
+              <div className="space-y-3 text-center">
+                <h2 className="text-3xl font-bold text-slate-800">Mental Health Assessment</h2>
+                <p className="text-slate-600">Help us understand your current wellbeing with a quick assessment</p>
+              </div>
+              <div className="space-y-4">
+                <Button
+                  onClick={nextStep}
+                  className="w-full h-16 text-lg font-semibold text-white transition-all duration-300 shadow-lg bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-indigo-600 hover:to-purple-700 rounded-xl hover:scale-105"
+                >
+                  <span className="mr-3">📋</span>
+                  Take Assessment
+                </Button>
+                <Button
+                  variant="outline"
+                  onClick={() => {
+                    updateProfile({ onboardingComplete: true })
+                    completeOnboarding()
+                  }}
+                  className="w-full text-lg font-medium transition-all duration-300 border-2 h-14 border-slate-200 hover:border-indigo-300 hover:bg-indigo-50 rounded-xl"
+                >
+                  Skip for Now
+                </Button>
+              </div>
             </div>
           </div>
         )
 
       case 10:
         return (
-          <div className={baseClasses}>
-            <div className={contentClasses}>
-              <Card className="p-10 border-0 shadow-lg bg-white/90 backdrop-blur-sm">
-                <CardContent className="space-y-8">
-                  <h2 className="text-2xl font-light text-purple-800 text-balance">Choose Assessment Type</h2>
-                  <div className="space-y-4">
-                    <Button
-                      variant={profile.assessmentType === "objective" ? "default" : "outline"}
-                      onClick={() => updateProfile({ assessmentType: "objective" })}
-                      className={cn(
-                        "w-full h-auto p-6 text-left rounded-xl font-medium transition-all duration-200",
-                        profile.assessmentType === "objective"
-                          ? "bg-purple-600 hover:bg-purple-700 text-white"
-                          : "border-slate-200 hover:border-purple-300 hover:bg-purple-50",
-                      )}
-                    >
-                      <div>
-                        <div className="font-semibold text-lg text-purple-800">Objective Assessment</div>
-                        <div className="text-sm opacity-80 mt-1 text-purple-600">
-                          Multiple choice questions (6 questions)
-                        </div>
-                      </div>
-                    </Button>
-                    <Button
-                      variant={profile.assessmentType === "subjective" ? "default" : "outline"}
-                      onClick={() => updateProfile({ assessmentType: "subjective" })}
-                      className={cn(
-                        "w-full h-auto p-6 text-left rounded-xl font-medium transition-all duration-200",
-                        profile.assessmentType === "subjective"
-                          ? "bg-purple-600 hover:bg-purple-700 text-white"
-                          : "border-slate-200 hover:border-purple-300 hover:bg-purple-50",
-                      )}
-                    >
-                      <div>
-                        <div className="font-semibold text-lg text-purple-800">Subjective Assessment</div>
-                        <div className="text-sm opacity-80 mt-1 text-purple-600">Open-ended questions (6 prompts)</div>
-                      </div>
-                    </Button>
+          <div className={contentClasses}>
+            <div className="space-y-8">
+              <div className="space-y-3 text-center">
+                <h2 className="text-3xl font-bold text-slate-800">Choose Assessment Type</h2>
+                <p className="text-slate-600">Pick the format that feels most comfortable</p>
+              </div>
+              <div className="space-y-4">
+                <Button
+                  variant={profile.assessmentType === "objective" ? "default" : "outline"}
+                  onClick={() => updateProfile({ assessmentType: "objective" })}
+                  className={cn(
+                    "w-full h-auto p-6 text-left rounded-xl transition-all duration-300 hover:scale-105 group",
+                    profile.assessmentType === "objective"
+                      ? "bg-gradient-to-r from-indigo-500 to-purple-600 text-white shadow-lg"
+                      : "border-2 border-slate-200 hover:border-indigo-300 hover:bg-indigo-50"
+                  )}
+                >
+                  <div className="flex items-center space-x-4">
+                    <span className="text-3xl group-hover:animate-pulse">📊</span>
+                    <div>
+                      <div className="mb-1 text-xl font-semibold">Structured Questions</div>
+                      <div className="text-base opacity-80">6 multiple choice questions</div>
+                    </div>
                   </div>
-                  <Button
-                    onClick={nextStep}
-                    disabled={!isStepValid()}
-                    className="w-full bg-purple-600 hover:bg-purple-700 disabled:bg-slate-300 text-white font-medium py-3 rounded-xl transition-all duration-200"
-                  >
-                    Continue
-                  </Button>
-                </CardContent>
-              </Card>
+                </Button>
+                <Button
+                  variant={profile.assessmentType === "subjective" ? "default" : "outline"}
+                  onClick={() => updateProfile({ assessmentType: "subjective" })}
+                  className={cn(
+                    "w-full h-auto p-6 text-left rounded-xl transition-all duration-300 hover:scale-105 group",
+                    profile.assessmentType === "subjective"
+                      ? "bg-gradient-to-r from-indigo-500 to-purple-600 text-white shadow-lg"
+                      : "border-2 border-slate-200 hover:border-indigo-300 hover:bg-indigo-50"
+                  )}
+                >
+                  <div className="flex items-center space-x-4">
+                    <span className="text-3xl group-hover:animate-pulse">💭</span>
+                    <div>
+                      <div className="mb-1 text-xl font-semibold">Open Reflection</div>
+                      <div className="text-base opacity-80">6 thoughtful prompts</div>
+                    </div>
+                  </div>
+                </Button>
+              </div>
+              <Button
+                onClick={nextStep}
+                disabled={!isStepValid()}
+                className="w-full text-lg font-semibold text-white transition-all duration-300 h-14 bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-indigo-600 hover:to-purple-700 disabled:from-slate-300 disabled:to-slate-400 rounded-xl hover:scale-105"
+              >
+                Continue
+              </Button>
             </div>
           </div>
         )
@@ -811,107 +648,115 @@ export default function OnboardingFlow({ lottieAnimationData, onComplete, redire
         if (profile.assessmentType === "objective") {
           const currentQuestion = OBJECTIVE_QUESTIONS[currentQuestionIndex]
           return (
-            <div className={baseClasses}>
-              <div className={contentClasses}>
-                <Card className="p-10 border-0 shadow-lg bg-white/90 backdrop-blur-sm">
-                  <CardContent className="space-y-8">
-                    <div className="text-sm text-purple-500 font-medium">
-                      Question {currentQuestionIndex + 1} of {OBJECTIVE_QUESTIONS.length}
-                    </div>
-                    <h2 className="text-xl font-medium text-purple-800 text-balance leading-relaxed">
-                      {currentQuestion.text}
-                    </h2>
-                    <div className="space-y-3">
-                      {currentQuestion.options.map((option) => (
-                        <Button
-                          key={option.value}
-                          variant={objectiveAnswers[currentQuestionIndex] === option.value ? "default" : "outline"}
-                          onClick={() => handleObjectiveAnswer(currentQuestionIndex, option.value)}
-                          className={cn(
-                            "w-full justify-start text-left h-auto p-4 rounded-xl font-medium transition-all duration-200",
-                            objectiveAnswers[currentQuestionIndex] === option.value
-                              ? "bg-purple-600 hover:bg-purple-700 text-white"
-                              : "border-slate-200 hover:border-purple-300 hover:bg-purple-50",
-                          )}
-                        >
-                          {option.label}
-                        </Button>
-                      ))}
-                    </div>
-                    <div className="flex gap-4">
-                      {currentQuestionIndex > 0 && (
-                        <Button
-                          variant="outline"
-                          onClick={() => setCurrentQuestionIndex((prev) => prev - 1)}
-                          className="flex-1 border-slate-200 hover:border-purple-300 hover:bg-purple-50 font-medium py-3 rounded-xl transition-all duration-200"
-                        >
-                          Previous
-                        </Button>
+            <div className={contentClasses}>
+              <div className="space-y-8">
+                <div className="space-y-3 text-center">
+                  <div className="flex items-center justify-center space-x-2 text-lg font-medium text-indigo-600">
+                    <span>Question {currentQuestionIndex + 1}</span>
+                    <span>of</span>
+                    <span>{OBJECTIVE_QUESTIONS.length}</span>
+                  </div>
+                  <h2 className="text-2xl font-bold leading-relaxed text-slate-800">
+                    {currentQuestion.text}
+                  </h2>
+                </div>
+                <div className="space-y-3">
+                  {currentQuestion.options.map((option, index) => (
+                    <Button
+                      key={option.value}
+                      variant={objectiveAnswers[currentQuestionIndex] === option.value ? "default" : "outline"}
+                      onClick={() => handleObjectiveAnswer(currentQuestionIndex, option.value)}
+                      className={cn(
+                        "w-full h-16 justify-start text-left text-lg font-medium rounded-xl transition-all duration-300 hover:scale-105",
+                        objectiveAnswers[currentQuestionIndex] === option.value
+                          ? "bg-gradient-to-r from-indigo-500 to-purple-600 text-white shadow-lg"
+                          : "border-2 border-slate-200 hover:border-indigo-300 hover:bg-indigo-50"
                       )}
-                      <Button
-                        onClick={() => {
-                          if (currentQuestionIndex < OBJECTIVE_QUESTIONS.length - 1) {
-                            setCurrentQuestionIndex((prev) => prev + 1)
-                          } else {
-                            nextStep()
-                          }
-                        }}
-                        disabled={objectiveAnswers[currentQuestionIndex] === undefined}
-                        className="flex-1 bg-purple-600 hover:bg-purple-700 disabled:bg-slate-300 text-white font-medium py-3 rounded-xl transition-all duration-200"
-                      >
-                        {currentQuestionIndex < OBJECTIVE_QUESTIONS.length - 1 ? "Next" : "Complete"}
-                      </Button>
-                    </div>
-                  </CardContent>
-                </Card>
+                    >
+                      <div className="flex items-center space-x-3">
+                        <div className="flex items-center justify-center w-6 h-6 border-2 border-current rounded-full">
+                          <div className={cn(
+                            "w-3 h-3 rounded-full transition-all duration-200",
+                            objectiveAnswers[currentQuestionIndex] === option.value ? "bg-white" : "bg-transparent"
+                          )} />
+                        </div>
+                        <span>{option.label}</span>
+                      </div>
+                    </Button>
+                  ))}
+                </div>
+                <div className="flex gap-4">
+                  {currentQuestionIndex > 0 && (
+                    <Button
+                      variant="outline"
+                      onClick={() => setCurrentQuestionIndex((prev) => prev - 1)}
+                      className="flex-1 text-lg font-medium transition-all duration-300 border-2 h-14 border-slate-200 hover:border-indigo-300 hover:bg-indigo-50 rounded-xl"
+                    >
+                      Previous
+                    </Button>
+                  )}
+                  <Button
+                    onClick={() => {
+                      if (currentQuestionIndex < OBJECTIVE_QUESTIONS.length - 1) {
+                        setCurrentQuestionIndex((prev) => prev + 1)
+                      } else {
+                        nextStep()
+                      }
+                    }}
+                    disabled={objectiveAnswers[currentQuestionIndex] === undefined}
+                    className="flex-1 text-lg font-semibold text-white transition-all duration-300 h-14 bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-indigo-600 hover:to-purple-700 disabled:from-slate-300 disabled:to-slate-400 rounded-xl"
+                  >
+                    {currentQuestionIndex < OBJECTIVE_QUESTIONS.length - 1 ? "Next Question" : "Complete Assessment"}
+                  </Button>
+                </div>
               </div>
             </div>
           )
         } else {
           const currentPrompt = SUBJECTIVE_PROMPTS[currentQuestionIndex]
           return (
-            <div className={baseClasses}>
-              <div className={contentClasses}>
-                <Card className="p-10 border-0 shadow-lg bg-white/90 backdrop-blur-sm">
-                  <CardContent className="space-y-8">
-                    <div className="text-sm text-purple-500 font-medium">
-                      Question {currentQuestionIndex + 1} of {SUBJECTIVE_PROMPTS.length}
-                    </div>
-                    <h2 className="text-xl font-medium text-purple-800 text-balance leading-relaxed">
-                      {currentPrompt}
-                    </h2>
-                    <Textarea
-                      placeholder="Share your thoughts..."
-                      value={subjectiveAnswers[currentQuestionIndex] || ""}
-                      onChange={(e) => handleSubjectiveAnswer(currentQuestionIndex, e.target.value)}
-                      className="min-h-32 border-slate-200 focus:border-purple-400 focus:ring-purple-400/20 rounded-xl resize-none"
-                    />
-                    <div className="flex gap-4">
-                      {currentQuestionIndex > 0 && (
-                        <Button
-                          variant="outline"
-                          onClick={() => setCurrentQuestionIndex((prev) => prev - 1)}
-                          className="flex-1 border-slate-200 hover:border-purple-300 hover:bg-purple-50 font-medium py-3 rounded-xl transition-all duration-200"
-                        >
-                          Previous
-                        </Button>
-                      )}
-                      <Button
-                        onClick={() => {
-                          if (currentQuestionIndex < SUBJECTIVE_PROMPTS.length - 1) {
-                            setCurrentQuestionIndex((prev) => prev + 1)
-                          } else {
-                            nextStep()
-                          }
-                        }}
-                        disabled={!subjectiveAnswers[currentQuestionIndex]?.trim()}
-                        className="flex-1 bg-purple-600 hover:bg-purple-700 disabled:bg-slate-300 text-white font-medium py-3 rounded-xl transition-all duration-200"
-                      >
-                        {currentQuestionIndex < SUBJECTIVE_PROMPTS.length - 1 ? "Next" : "Complete"}
-                      </Button>
-                    </div>
-                  </CardContent>
-                </Card>
+            <div className={contentClasses}>
+              <div className="space-y-8">
+                <div className="space-y-3 text-center">
+                  <div className="flex items-center justify-center space-x-2 text-lg font-medium text-indigo-600">
+                    <span>Question {currentQuestionIndex + 1}</span>
+                    <span>of</span>
+                    <span>{SUBJECTIVE_PROMPTS.length}</span>
+                  </div>
+                  <h2 className="text-2xl font-bold leading-relaxed text-slate-800">
+                    {currentPrompt}
+                  </h2>
+                </div>
+                <Textarea
+                  placeholder="Take your time to reflect and share your thoughts..."
+                  value={subjectiveAnswers[currentQuestionIndex] || ""}
+                  onChange={(e) => handleSubjectiveAnswer(currentQuestionIndex, e.target.value)}
+                  className="text-lg transition-all duration-300 border-2 resize-none min-h-32 border-slate-200 focus:border-indigo-400 focus:ring-indigo-200 rounded-xl"
+                />
+                <div className="flex gap-4">
+                  {currentQuestionIndex > 0 && (
+                    <Button
+                      variant="outline"
+                      onClick={() => setCurrentQuestionIndex((prev) => prev - 1)}
+                      className="flex-1 text-lg font-medium transition-all duration-300 border-2 h-14 border-slate-200 hover:border-indigo-300 hover:bg-indigo-50 rounded-xl"
+                    >
+                      Previous
+                    </Button>
+                  )}
+                  <Button
+                    onClick={() => {
+                      if (currentQuestionIndex < SUBJECTIVE_PROMPTS.length - 1) {
+                        setCurrentQuestionIndex((prev) => prev + 1)
+                      } else {
+                        nextStep()
+                      }
+                    }}
+                    disabled={!subjectiveAnswers[currentQuestionIndex]?.trim()}
+                    className="flex-1 text-lg font-semibold text-white transition-all duration-300 h-14 bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-indigo-600 hover:to-purple-700 disabled:from-slate-300 disabled:to-slate-400 rounded-xl"
+                  >
+                    {currentQuestionIndex < SUBJECTIVE_PROMPTS.length - 1 ? "Next Question" : "Complete Assessment"}
+                  </Button>
+                </div>
               </div>
             </div>
           )
@@ -920,88 +765,121 @@ export default function OnboardingFlow({ lottieAnimationData, onComplete, redire
       case 12:
         const scores = profile.assessmentType === "objective" ? calculateScores(objectiveAnswers) : null
         return (
-          <div className={baseClasses}>
-            <div className={contentClasses}>
-              <Card className="p-10 border-0 shadow-lg bg-white/90 backdrop-blur-sm">
-                <CardContent className="space-y-8">
-                  <h2 className="text-2xl font-light text-purple-800 text-balance">Assessment Complete!</h2>
+          <div className={contentClasses}>
+            <div className="space-y-8">
+              <div className="space-y-4 text-center">
+                <div className="flex items-center justify-center w-20 h-20 mx-auto rounded-full bg-gradient-to-r from-green-400 to-emerald-500">
+                  <span className="text-3xl">✨</span>
+                </div>
+                <h2 className="text-3xl font-bold text-slate-800">All Set!</h2>
+                <p className="text-slate-600">Here's your personalized profile summary</p>
+              </div>
 
-                  <div className="space-y-6">
-                    <div className="p-6 bg-slate-50/80 rounded-xl border border-slate-100">
-                      <h3 className="font-semibold text-purple-800 mb-4">Your Profile</h3>
-                      <div className="space-y-2 text-purple-600">
-                        <p>
-                          <strong>Name:</strong> {profile.name} ({profile.nickname})
-                        </p>
-                        <p>
-                          <strong>Location:</strong> {profile.state}
-                        </p>
-                        <p>
-                          <strong>Language:</strong> {profile.language}
-                        </p>
-                        <p>
-                          <strong>Current Mood:</strong> {MOOD_OPTIONS.find((m) => m.value === profile.mood)?.label}
-                        </p>
+              <div className="space-y-6">
+                <Card className="p-6 border-2 border-indigo-100 bg-gradient-to-r from-indigo-50 to-purple-50 rounded-2xl">
+                  <CardContent className="p-0 space-y-4">
+                    <h3 className="flex items-center text-xl font-semibold text-indigo-800">
+                      <span className="mr-2">👤</span>
+                      Your Profile
+                    </h3>
+                    <div className="grid grid-cols-1 gap-4 md:grid-cols-2 text-slate-700">
+                      <div>
+                        <span className="font-medium">Name:</span> {profile.name}
+                      </div>
+                      <div>
+                        <span className="font-medium">Nickname:</span> {profile.nickname}
+                      </div>
+                      <div>
+                        <span className="font-medium">Location:</span> {profile.state}
+                      </div>
+                      <div>
+                        <span className="font-medium">Language:</span> {profile.language}
+                      </div>
+                      <div>
+                        <span className="font-medium">Current Mood:</span> {MOOD_OPTIONS.find((m) => m.value === profile.mood)?.label}
                       </div>
                     </div>
+                  </CardContent>
+                </Card>
 
-                    {profile.assessmentType === "objective" && scores && (
-                      <div className="p-6 bg-slate-50/80 rounded-xl border border-slate-100">
-                        <h3 className="font-semibold text-purple-800 mb-4">Assessment Results</h3>
-                        <div className="space-y-3 text-purple-600">
-                          <p>
-                            <strong>Depression:</strong> {getScoreLabel(scores.depressionScore, 6)} (
-                            {scores.depressionScore}/6)
-                          </p>
-                          <p>
-                            <strong>Anxiety:</strong> {getScoreLabel(scores.anxietyScore, 6)} ({scores.anxietyScore}/6)
-                          </p>
-                          <p>
-                            <strong>Overall:</strong> {getScoreLabel(scores.totalScore, 18)} ({scores.totalScore}/18)
-                          </p>
+                {profile.assessmentType === "objective" && scores && (
+                  <Card className="p-6 border-2 border-blue-100 bg-gradient-to-r from-blue-50 to-cyan-50 rounded-2xl">
+                    <CardContent className="p-0 space-y-4">
+                      <h3 className="flex items-center text-xl font-semibold text-blue-800">
+                        <span className="mr-2">📊</span>
+                        Assessment Results
+                      </h3>
+                      <div className="space-y-3">
+                        <div className="flex items-center justify-between p-3 rounded-lg bg-white/60">
+                          <span className="font-medium text-slate-700">Depression Score:</span>
+                          <span className="font-semibold text-blue-600">
+                            {getScoreLabel(scores.depressionScore, 6)} ({scores.depressionScore}/6)
+                          </span>
+                        </div>
+                        <div className="flex items-center justify-between p-3 rounded-lg bg-white/60">
+                          <span className="font-medium text-slate-700">Anxiety Score:</span>
+                          <span className="font-semibold text-blue-600">
+                            {getScoreLabel(scores.anxietyScore, 6)} ({scores.anxietyScore}/6)
+                          </span>
+                        </div>
+                        <div className="flex items-center justify-between p-3 rounded-lg bg-white/60">
+                          <span className="font-medium text-slate-700">Overall Score:</span>
+                          <span className="font-semibold text-blue-600">
+                            {getScoreLabel(scores.totalScore, 18)} ({scores.totalScore}/18)
+                          </span>
                         </div>
                       </div>
-                    )}
+                    </CardContent>
+                  </Card>
+                )}
 
-                    {profile.assessmentType === "subjective" && (
-                      <div className="p-6 bg-slate-50/80 rounded-xl border border-slate-100">
-                        <h3 className="font-semibold text-purple-800 mb-4">Your Responses</h3>
-                        <p className="text-purple-600 leading-relaxed">
-                          Thank you for sharing your thoughts. We'll use this information to provide personalized
-                          support.
-                        </p>
-                      </div>
-                    )}
-
-                    <div className="p-6 bg-amber-50/80 border border-amber-200 rounded-xl">
-                      <p className="text-amber-800 leading-relaxed">
-                        <strong>Disclaimer:</strong> This assessment is for informational purposes only and is not
-                        intended for diagnosis. Please consult with a healthcare professional for proper evaluation and
-                        treatment.
+                {profile.assessmentType === "subjective" && (
+                  <Card className="p-6 border-2 border-green-100 bg-gradient-to-r from-green-50 to-emerald-50 rounded-2xl">
+                    <CardContent className="p-0 space-y-4">
+                      <h3 className="flex items-center text-xl font-semibold text-green-800">
+                        <span className="mr-2">💭</span>
+                        Your Reflections
+                      </h3>
+                      <p className="text-slate-700">
+                        Thank you for sharing your thoughtful responses. We'll use these insights to provide personalized support tailored to your unique journey.
                       </p>
-                    </div>
-                  </div>
+                    </CardContent>
+                  </Card>
+                )}
 
-                  <div className="space-y-4">
-                    <Button
-                      onClick={() => {
-                        completeOnboarding()
-                        window.location.href = redirectPath
-                      }}
-                      className="w-full bg-purple-600 hover:bg-purple-700 text-white font-medium py-3 rounded-xl transition-all duration-200"
-                    >
-                      Go to Dashboard
-                    </Button>
-                    <Button
-                      variant="outline"
-                      onClick={retakeAssessment}
-                      className="w-full border-slate-200 hover:border-purple-300 hover:bg-purple-50 font-medium py-3 rounded-xl transition-all duration-200 bg-transparent"
-                    >
-                      Retake Assessment
-                    </Button>
-                  </div>
-                </CardContent>
-              </Card>
+                <Card className="p-6 border-2 bg-gradient-to-r from-amber-50 to-yellow-50 border-amber-100 rounded-2xl">
+                  <CardContent className="p-0 space-y-3">
+                    <h3 className="flex items-center text-lg font-semibold text-amber-800">
+                      <span className="mr-2">⚠️</span>
+                      Important Note
+                    </h3>
+                    <p className="text-amber-800">
+                      This assessment is for informational purposes only and should not be used for diagnosis. 
+                      Please consult with a healthcare professional for proper evaluation and treatment.
+                    </p>
+                  </CardContent>
+                </Card>
+              </div>
+
+              <div className="space-y-4">
+                <Button
+                  onClick={() => {
+                    completeOnboarding()
+                    if (redirectPath) window.location.href = redirectPath
+                  }}
+                  className="w-full h-16 text-lg font-semibold text-white transition-all duration-300 shadow-lg bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-indigo-600 hover:to-purple-700 rounded-xl hover:scale-105"
+                >
+                  <span className="mr-3">🚀</span>
+                  Start Your Journey
+                </Button>
+                <Button
+                  variant="outline"
+                  onClick={retakeAssessment}
+                  className="w-full text-lg font-medium transition-all duration-300 border-2 h-14 border-slate-200 hover:border-indigo-300 hover:bg-indigo-50 rounded-xl"
+                >
+                  Retake Assessment
+                </Button>
+              </div>
             </div>
           </div>
         )
@@ -1012,22 +890,65 @@ export default function OnboardingFlow({ lottieAnimationData, onComplete, redire
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-purple-50/30 to-blue-50/20 flex flex-col">
-      <div className="p-6 border-b border-slate-200/50 bg-white/60 backdrop-blur-md">
-        <div className="max-w-4xl mx-auto">
-          <div className="flex items-center justify-between mb-3">
-            <span className="text-sm text-purple-500 font-medium">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-indigo-50">
+      {/* Progress Bar */}
+      <div className="sticky top-0 z-50 p-6 border-b shadow-sm bg-white/80 backdrop-blur-lg border-slate-200/50">
+        <div className="max-w-2xl mx-auto">
+          <div className="flex items-center justify-between mb-4">
+            <span className="text-sm font-semibold text-indigo-600">
               Step {currentStep} of {totalSteps}
             </span>
-            <span className="text-sm text-purple-500 font-medium">{Math.round((currentStep / totalSteps) * 100)}%</span>
+            <span className="text-sm font-semibold text-indigo-600">
+              {Math.round((currentStep / totalSteps) * 100)}%
+            </span>
           </div>
-          <Progress value={(currentStep / totalSteps) * 100} className="h-2 bg-slate-100" />
+          <Progress 
+            value={(currentStep / totalSteps) * 100} 
+            className="h-3 overflow-hidden rounded-full bg-slate-200"
+          />
         </div>
       </div>
 
-      <div className="flex-1 flex flex-col lg:flex-row">
-        <div className="lg:w-1/2">{renderMascotArea()}</div>
-        <div className="lg:w-1/2">{renderStepContent()}</div>
+      {/* Main Content */}
+      <div className="flex flex-col lg:flex-row min-h-[calc(100vh-120px)]">
+        {/* Mascot Area */}
+        <div className="flex items-center justify-center p-8 lg:w-1/2 lg:p-12 bg-gradient-to-br from-indigo-50/50 via-white to-purple-50/30">
+          <div className="w-full max-w-md space-y-8">
+            <div className="flex justify-center">
+              <MascotWithAnimation className="cursor-pointer" />
+            </div>
+            <div className="space-y-4 text-center">
+              <div className="inline-flex items-center justify-center px-4 py-2 text-sm font-medium text-indigo-800 bg-indigo-100 rounded-full">
+                MitrAI Assistant
+              </div>
+              <p className="text-lg font-medium leading-relaxed text-slate-700">
+                {currentStep === 1 &&
+                  "Hi there! I'm MitrAI, your friendly companion on this mental wellbeing journey. Let's create something amazing together!"}
+                {currentStep === 2 && "Nice to meet you! What should I call you?"}
+                {currentStep === 3 && "Perfect! Do you have a nickname you prefer?"}
+                {currentStep === 4 && "Got it! How do you identify yourself?"}
+                {currentStep === 5 && "Wonderful! Where are you located?"}
+                {currentStep === 6 && "Excellent! What language feels most comfortable?"}
+                {currentStep === 7 && "Great! When do you celebrate your birthday?"}
+                {currentStep === 8 && "Thank you for sharing! How's your mood today?"}
+                {currentStep === 9 && "Amazing progress! Ready for a quick wellbeing check?"}
+                {currentStep === 10 && "Perfect! Which assessment style works best for you?"}
+                {currentStep === 11 &&
+                  profile.assessmentType === "objective" &&
+                  "You're doing great! Just answer honestly - there are no wrong answers."}
+                {currentStep === 11 && profile.assessmentType === "subjective" && "Take your time to reflect. Your thoughts matter to us."}
+                {currentStep === 12 && "Fantastic! You've completed your profile. Ready to begin your journey?"}
+              </p>
+            </div>
+          </div>
+        </div>
+
+        {/* Content Area */}
+        <div className="flex items-center justify-center p-8 lg:w-1/2 lg:p-12">
+          <div className="w-full max-w-lg">
+            {renderStepContent()}
+          </div>
+        </div>
       </div>
     </div>
   )

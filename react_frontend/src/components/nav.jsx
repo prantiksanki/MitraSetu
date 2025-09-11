@@ -3,6 +3,7 @@ import { Link, useLocation } from 'react-router-dom';
 import { useAuth0 } from "@auth0/auth0-react";
 import { Home as HomeIcon, BookOpen, Users, User, PlusSquare, Video, Shield, ShoppingBag, Trophy, MessageCircleMore, Ellipsis } from 'lucide-react';
 
+
 export function Nav() {
   const location = useLocation();
   const navItems = [
@@ -38,7 +39,7 @@ const origin = window.location.origin;
         {/* Icon nav (horizontal) */}
         <div className="items-center hidden gap-2 md:flex">
           <HorizontalItem active={location.pathname === '/home'} to="/home" color="bg-[#2B3442]" Icon={HomeIcon} label="Home" />
-          <HorizontalItem asAnchor href="#post-tip" color="bg-[#7C3AED]" Icon={PlusSquare} label="Post" />
+          <HorizontalItem asAnchor href="/home#post-tip" color="bg-[#7C3AED]" Icon={PlusSquare} label="Post" />
           <HorizontalItem active={location.pathname === '/live'} to="/live" color="bg-[#16A34A]" Icon={Video} label="Live" />
           <HorizontalItem active={location.pathname === '/journey'} to="/journey" color="bg-[#FB923C]" Icon={BookOpen} label="Chat" />
           <HorizontalItem active={location.pathname === '/resources'} to="/resources" color="bg-[#F59E0B]" Icon={Shield} label="Circle" />
