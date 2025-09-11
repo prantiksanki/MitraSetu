@@ -7,8 +7,7 @@ import LandingPage from './pages/LandingPage'
 import Home from './pages/Home'
 import ChatPage from './pages/ChatPage'
 import PeerChat from './pages/PeerChat';
-import LivePage from './pages/LivePage';
-// import LoginPage from './pages/LoginPage';
+import Landing from './pages/Landing';
 
 
 function App() {
@@ -23,6 +22,7 @@ function App() {
       <Route path="/live" element={<LivePage />} />
       <Route path="/resources" element={<PeerChat />} />
   <Route path="/profile" element={<Profile />} />
+  <Route path="/onboarding" element={<Onboarding />} />
   </Routes>
     </Router>
   );
