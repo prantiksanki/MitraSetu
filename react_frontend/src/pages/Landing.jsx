@@ -93,7 +93,7 @@ export default function Landing() {
 
   return (
     <div style={{ position: 'relative', zIndex: 1 }}>
-      {/* Parallax SVG Gradient Background */}
+      {/* Superconscious-style Background */}
       <div
         style={{
           position: 'fixed',
@@ -103,20 +103,47 @@ export default function Landing() {
           height: '100vh',
           zIndex: 0,
           pointerEvents: 'none',
+          background: 'linear-gradient(135deg, #0a0a0a 0%, #1a0a2e 25%, #16213e 50%, #0f3460 75%, #0a0a0a 100%)',
         }}
         aria-hidden="true"
       >
-        <svg width="100%" height="100%" viewBox="0 0 1920 1080" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ position: 'absolute', width: '100%', height: '100%' }}>
-          <defs>
-            <linearGradient id="parallaxGradient" x1="0" y1="0" x2="1" y2="1">
-              <stop offset="0%" stopColor="#7f5fff" stopOpacity="0.18" />
-              <stop offset="100%" stopColor="#5fffd7" stopOpacity="0.12" />
-            </linearGradient>
-          </defs>
-          <ellipse cx="960" cy="540" rx="900" ry="400" fill="url(#parallaxGradient)" style={{ transform: `translateY(${scrollY * 0.15}px)` }} />
-          <ellipse cx="500" cy="900" rx="400" ry="120" fill="#7f5fff" opacity="0.08" style={{ transform: `translateY(${scrollY * 0.25}px)` }} />
-          <ellipse cx="1600" cy="200" rx="300" ry="100" fill="#5fffd7" opacity="0.10" style={{ transform: `translateY(${scrollY * 0.18}px)` }} />
-        </svg>
+        {/* Floating orbs similar to Superconscious */}
+        <div style={{
+          position: 'absolute',
+          top: '20%',
+          left: '10%',
+          width: '300px',
+          height: '300px',
+          background: 'radial-gradient(circle, rgba(139, 92, 246, 0.1) 0%, transparent 70%)',
+          borderRadius: '50%',
+          filter: 'blur(40px)',
+          transform: `translateY(${scrollY * 0.1}px)`,
+          animation: 'float 6s ease-in-out infinite'
+        }} />
+        <div style={{
+          position: 'absolute',
+          top: '60%',
+          right: '15%',
+          width: '200px',
+          height: '200px',
+          background: 'radial-gradient(circle, rgba(99, 102, 241, 0.08) 0%, transparent 70%)',
+          borderRadius: '50%',
+          filter: 'blur(30px)',
+          transform: `translateY(${scrollY * 0.15}px)`,
+          animation: 'float 8s ease-in-out infinite reverse'
+        }} />
+        <div style={{
+          position: 'absolute',
+          bottom: '20%',
+          left: '30%',
+          width: '150px',
+          height: '150px',
+          background: 'radial-gradient(circle, rgba(168, 85, 247, 0.06) 0%, transparent 70%)',
+          borderRadius: '50%',
+          filter: 'blur(25px)',
+          transform: `translateY(${scrollY * 0.2}px)`,
+          animation: 'float 10s ease-in-out infinite'
+        }} />
       </div>
       {/* Scroll Progress Bar */}
       <div style={{
