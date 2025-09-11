@@ -2,14 +2,36 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Optional: self-host commercial fonts if available under /public/fonts */
+@font-face {
+  font-family: 'DIN Next Rounded';
+  src: url('/fonts/din-next-rounded.woff2') format('woff2'),
+       url('/fonts/din-next-rounded.woff') format('woff');
+  font-weight: 300 800;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Feather';
+  src: url('/fonts/feather-bold.woff2') format('woff2'),
+       url('/fonts/feather-bold.woff') format('woff');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
 body {
   margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-    sans-serif;
+  font-family: 'DIN Next Rounded', 'Feather', 'Nunito', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
+  font-weight: 600;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
+
+/* Ensure Tailwind base uses our font without adding classes */
+:root, html, body, #root { font-family: theme('fontFamily.sans'); }
 
 code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
@@ -34,4 +56,19 @@ code {
 @keyframes fade-in {
   from { opacity: 0; }
   to { opacity: 1; }
+}
+
+/* Interactive reading font for quotes/jokes/stories */
+.reading-prose {
+  font-family: 'DIN Next Rounded', 'Nunito', system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+  font-weight: 600;
+  line-height: 1.7;
+}
+
+/* Twemoji normalization */
+.use-twemoji img.emoji {
+  height: 1em;
+  width: 1em;
+  margin: 0 .05em 0 .1em;
+  vertical-align: -0.1em;
 }

@@ -1,7 +1,7 @@
 import React from 'react'
 import { Link, useLocation } from 'react-router-dom';
 import { useAuth0 } from "@auth0/auth0-react";
-import { Home as HomeIcon, BookOpen, Users, User, PlusSquare, Video } from 'lucide-react';
+import { Home as HomeIcon, BookOpen, Users, User, PlusSquare, Video, Shield, ShoppingBag, Trophy, MessageCircleMore, Ellipsis } from 'lucide-react';
 
 export function Nav() {
   const location = useLocation();
@@ -32,26 +32,19 @@ const origin = window.location.origin;
   }
 
   return (
-    <nav className="fixed top-0 left-0 z-50 flex items-center justify-between w-full px-6 py-4 shadow-lg bg-white border-b border-gray-200">
-      <div className="flex items-center space-x-3">
-        <img src="/colored-logo.png" alt="MitraSetu" className="h-8 w-auto" />
+    <nav className="fixed top-0 left-0 z-50 flex items-center justify-between w-full px-6 py-4 bg-white border-b border-gray-200 shadow-lg">
+      <div className="flex items-center gap-4">
+        <img src="/colored-logo.png" alt="MitraSetu" className="w-auto h-8" />
+        {/* Icon nav (horizontal) */}
+        <div className="items-center hidden gap-2 md:flex">
+          <HorizontalItem active={location.pathname === '/home'} to="/home" color="bg-[#2B3442]" Icon={HomeIcon} label="Home" />
+          <HorizontalItem asAnchor href="#post-tip" color="bg-[#7C3AED]" Icon={PlusSquare} label="Post" />
+          <HorizontalItem active={location.pathname === '/live'} to="/live" color="bg-[#16A34A]" Icon={Video} label="Live" />
+          <HorizontalItem active={location.pathname === '/journey'} to="/journey" color="bg-[#FB923C]" Icon={BookOpen} label="Chat" />
+          <HorizontalItem active={location.pathname === '/resources'} to="/resources" color="bg-[#F59E0B]" Icon={Shield} label="Circle" />
+          <HorizontalItem active={location.pathname === '/profile'} to="/profile" color="bg-[#3B82F6]" Icon={User} label="Profile" />
+        </div>
       </div>
-      <ul className="flex space-x-6">
-        {navItems.map(item => (
-          <li key={item.name}>
-            <Link
-              to={item.path}
-              className={`text-sm font-medium px-3 py-2 rounded-md transition 
-                ${location.pathname === item.path
-                  ? 'bg-gray-100 text-gray-900'
-                  : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'}
-              `}
-            >
-              {item.name}
-            </Link>
-          </li>
-        ))}
-      </ul>
       <div className="flex items-center space-x-2">
         <button className="px-4 py-2 text-sm font-semibold text-white transition bg-indigo-600 rounded-md hover:bg-indigo-700"
          onClick={handleLogout}
@@ -67,30 +60,48 @@ function SidebarHome({ pathname }) {
   const [collapsed, setCollapsed] = React.useState(false)
   return (
     <div className={`fixed left-0 top-0 h-full ${collapsed ? 'w-16' : 'w-64'} px-4 py-6 bg-white text-gray-900 border-r border-gray-200 hidden md:block transition-all`}>
-      <div className="mb-6 px-2 flex items-center justify-between">
-        <img src="/colored-logo.png" alt="MitraSetu" className="h-10 w-auto" />
-        <button onClick={()=>setCollapsed(c=>!c)} className="text-xs px-2 py-1 rounded bg-gray-100 hover:bg-gray-200">{collapsed? '>' : '<'}</button>
+      <div className="flex items-center justify-between px-2 mb-6">
+        <img src="/colored-logo.png" alt="MitraSetu" className="w-auto h-10" />
+        <button onClick={()=>setCollapsed(c=>!c)} className="px-2 py-1 text-xs bg-gray-100 rounded hover:bg-gray-200">{collapsed? '>' : '<'}</button>
       </div>
       <div className="space-y-2">
-        <Link to="/home" className={`flex items-center gap-3 px-4 py-3 rounded-xl ${pathname === '/home' ? 'bg-gray-100' : 'hover:bg-gray-50'}`}>
-          <HomeIcon size={18} /> {!collapsed && <span className="font-semibold">Home</span>}
-        </Link>
-        <a href="#post-tip" className="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-gray-50">
-          <PlusSquare size={18} /> {!collapsed && <span className="font-semibold">Post Health Tip</span>}
-        </a>
-        <Link to="/live" className={`flex items-center gap-3 px-4 py-3 rounded-xl ${pathname === '/live' ? 'bg-gray-100' : 'hover:bg-gray-50'}`}>
-          <Video size={18} /> {!collapsed && <span className="font-semibold">Live with Mitra</span>}
-        </Link>
-        <Link to="/journey" className={`flex items-center gap-3 px-4 py-3 rounded-xl ${pathname === '/journey' ? 'bg-gray-100' : 'hover:bg-gray-50'}`}>
-          <BookOpen size={18} /> {!collapsed && <span className="font-semibold">Journey</span>}
-        </Link>
-        <Link to="/resources" className={`flex items-center gap-3 px-4 py-3 rounded-xl ${pathname === '/resources' ? 'bg-gray-100' : 'hover:bg-gray-50'}`}>
-          <Users size={18} /> {!collapsed && <span className="font-semibold">Resources</span>}
-        </Link>
-        <Link to="/profile" className={`flex items-center gap-3 px-4 py-3 rounded-xl ${pathname === '/profile' ? 'bg-gray-100' : 'hover:bg-gray-50'}`}>
-          <User size={18} /> {!collapsed && <span className="font-semibold">Profile</span>}
-        </Link>
+        <SidebarItem active={pathname === '/home'} collapsed={collapsed} color="bg-[#2B3442]" Icon={HomeIcon} label="Home" to="/home" />
+        <SidebarItem asAnchor href="#post-tip" collapsed={collapsed} color="bg-[#7C3AED]" Icon={PlusSquare} label="Post Health Tip" />
+        <SidebarItem active={pathname === '/live'} collapsed={collapsed} color="bg-[#16A34A]" Icon={Video} label="Live with Mitra" to="/live" />
+        <SidebarItem active={pathname === '/journey'} collapsed={collapsed} color="bg-[#FB923C]" Icon={BookOpen} label="Chat with Mitra" to="/journey" />
+        <SidebarItem active={pathname === '/resources'} collapsed={collapsed} color="bg-[#F59E0B]" Icon={Shield} label="Mitra Circle" to="/resources" />
+        {/* <SidebarItem active={pathname === '/shop'} collapsed={collapsed} color="bg-[#EF4444]" Icon={ShoppingBag} label="Shop" to="/shop" /> */}
+        <SidebarItem active={pathname === '/profile'} collapsed={collapsed} color="bg-[#3B82F6]" Icon={User} label="Profile" to="/profile" />
+        {/* <SidebarItem asAnchor href="#more" collapsed={collapsed} color="bg-[#A855F7]" Icon={Ellipsis} label="More" /> */}
       </div>
     </div>
   )
+}
+
+function SidebarItem({ asAnchor=false, href, to, active=false, collapsed, color='bg-gray-200', Icon, label }) {
+  const common = `flex items-center gap-3 px-4 py-3 rounded-xl ${active ? 'bg-gray-100' : 'hover:bg-gray-50'}`
+  const iconWrap = `flex items-center justify-center w-9 h-9 rounded-lg text-white ${color}`
+  const content = (
+    <div className={common}>
+      <div className={iconWrap}><Icon size={18} /></div>
+      {!collapsed && <span className="font-semibold">{label}</span>}
+    </div>
+  )
+  if (asAnchor) {
+    return <a href={href}>{content}</a>
+  }
+  return <Link to={to}>{content}</Link>
+}
+
+function HorizontalItem({ asAnchor=false, href, to, active=false, color='bg-gray-200', Icon, label }) {
+  const base = `flex items-center gap-2 px-3 py-2 rounded-xl ${active ? 'bg-gray-100' : 'hover:bg-gray-50'}`
+  const iconWrap = `flex items-center justify-center w-8 h-8 rounded-lg text-white ${color}`
+  const content = (
+    <div className={base}>
+      <div className={iconWrap}><Icon size={16} /></div>
+      <span className="hidden text-sm font-semibold lg:inline">{label}</span>
+    </div>
+  )
+  if (asAnchor) return <a href={href}>{content}</a>
+  return <Link to={to}>{content}</Link>
 }

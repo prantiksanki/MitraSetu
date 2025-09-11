@@ -14,6 +14,12 @@ const Chat = ({ socket, roomId, onLeaveRoom }) => {
   const [copied, setCopied] = useState(false);
   const messagesEndRef = useRef(null);
   const emojiPickerRef = useRef(null);
+  const quickReplies = [
+    'I need help coping with stress',
+    'Give me a breathing exercise',
+    'Share a positive affirmation',
+    'How can I improve focus?'
+  ]
 
   useEffect(() => {
     socket.on('chat_message', (msg) => {
@@ -69,6 +75,7 @@ const Chat = ({ socket, roomId, onLeaveRoom }) => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages]);
 
+
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (emojiPickerRef.current && !emojiPickerRef.current.contains(event.target)) {
@@ -84,6 +91,8 @@ const Chat = ({ socket, roomId, onLeaveRoom }) => {
     if (username.trim()) {
       socket.emit('join_room', { username, role: userRole, roomId });
       setIsJoined(true);
+      // Create a new session on join if no session selected
+      // no session handling for peer chat
     }
   };
 
@@ -101,6 +110,8 @@ const Chat = ({ socket, roomId, onLeaveRoom }) => {
       setShowEmojiPicker(false);
     }
   };
+
+  // no session management for peer chat
 
   const handleEmojiSelect = (emoji) => {
     setInput(prev => prev + emoji);
@@ -216,7 +227,7 @@ const Chat = ({ socket, roomId, onLeaveRoom }) => {
 
   return (
     <div className="flex items-stretch justify-center w-full h-full p-0 text-gray-900 bg-gray-50">
-      <div className="w-full flex flex-col h-[calc(100vh-7rem)] bg-white border-x border-gray-200">
+      <div className="flex-1 w-full flex flex-col h-[calc(100vh-7rem)] bg-white border-x border-gray-200">
         {/* Header */}
         <div className="px-4 py-3 bg-white border-b border-gray-200">
           <div className="flex items-center justify-between">
@@ -278,14 +289,19 @@ const Chat = ({ socket, roomId, onLeaveRoom }) => {
                       {msg.sender} • {formatTime(msg.timestamp)}
                     </span>
                   </div>
-                  <div
-                    className={`px-3 py-2 border rounded-lg ${
-                      msg.sender === username
-                        ? 'bg-indigo-50 text-gray-900 border-indigo-200'
-                        : 'bg-gray-50 text-gray-900 border-gray-200'
-                    }`}
-                  >
-                    {msg.text}
+                  <div className="flex items-end gap-2">
+                    {msg.sender !== username && (
+                      <img src="/MitraSetu-Mascot.jpg" alt="Mitra mascot" className="rounded-full shadow w-7 h-7" />
+                    )}
+                    <div
+                      className={`px-3 py-2 border rounded-2xl ${
+                        msg.sender === username
+                          ? 'bg-[#E8F0FE] text-gray-900 border-[#C7D2FE]'
+                          : 'bg-[#F8FAFC] text-gray-900 border-gray-200'
+                      }`}
+                    >
+                      {msg.text}
+                    </div>
                   </div>
                 </div>
               )}
@@ -294,16 +310,22 @@ const Chat = ({ socket, roomId, onLeaveRoom }) => {
           <div ref={messagesEndRef} />
         </div>
 
-        {/* Input */}
-        <div className="px-4 py-3 bg-white border-t border-gray-200">
+        {/* Quick replies */}
+        <div className="px-4 pt-2 bg-white border-t border-gray-200">
+          <div className="flex flex-wrap gap-2 pb-2">
+            {quickReplies.map((q) => (
+              <button key={q} onClick={()=>setInput(q)} className="px-2 py-1 text-xs font-medium border border-gray-200 rounded-full bg-gray-50 hover:bg-gray-100">{q}</button>
+            ))}
+          </div>
+          {/* Input */}
           <div className="relative flex gap-2">
             <div className="relative flex-1">
               <input
                 type="text"
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
-                placeholder="Message #channel"
-                className="w-full px-4 py-3 pr-12 text-sm text-gray-900 placeholder-gray-400 bg-white border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                placeholder="Type a message..."
+                className="w-full px-4 py-2.5 pr-12 text-sm text-gray-900 placeholder-gray-400 bg-white border border-gray-300 rounded-full focus:outline-none focus:ring-2 focus:ring-indigo-500"
                 onKeyPress={(e) => e.key === 'Enter' && sendMessage()}
               />
               <div className="absolute transform -translate-y-1/2 right-2 top-1/2">
@@ -323,7 +345,7 @@ const Chat = ({ socket, roomId, onLeaveRoom }) => {
             <button
               onClick={sendMessage}
               disabled={!input.trim()}
-              className="px-4 py-3 text-sm font-semibold text-white bg-indigo-600 rounded hover:bg-indigo-700 disabled:opacity-50"
+              className="px-4 py-2.5 text-sm font-semibold text-white bg-indigo-600 rounded-full hover:bg-indigo-700 disabled:opacity-50"
             >
               <Send className="w-5 h-5" />
             </button>

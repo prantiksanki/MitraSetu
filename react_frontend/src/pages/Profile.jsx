@@ -1,6 +1,6 @@
 
-
 import { ArrowLeft, Calendar, Users, MessageCircle, Star, Award, Heart, Frown, Smile } from "lucide-react"
+import { Nav } from '../components/nav'
 
 export default function ProfilePage() {
   const currentMood = "Happy"; // This could be dynamic
@@ -33,25 +33,8 @@ export default function ProfilePage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-purple-100 via-purple-50 to-pink-50">
-      {/* Header */}
-      <div className="sticky top-0 z-10 border-b border-purple-200 bg-white/80 backdrop-blur-sm">
-        <div className="container flex items-center justify-between px-4 py-4 mx-auto">
-          <a href="/home">
-            <button className="flex items-center px-3 py-1 text-purple-700 transition-colors border border-transparent rounded hover:bg-purple-50 hover:border-purple-200">
-              <ArrowLeft className="w-5 h-5 mr-2" />
-              Back
-            </button>
-          </a>
-          <img
-            src="/colored-logo.png"
-            alt="MitraSetu Logo"
-            width={180}
-            height={60}
-            className="w-auto h-12"
-          />
-        </div>
-      </div>
-      <div className="container max-w-2xl px-4 py-8 mx-auto">
+      <Nav />
+      <div className="w-full max-w-5xl px-4 pt-24 pb-8 mx-auto">
         {/* Profile Info */}
         <div className="mb-6 border border-purple-200 shadow rounded-xl bg-white/80">
           <div className="p-6">
@@ -62,8 +45,8 @@ export default function ProfilePage() {
                   <img src="Profile.png" alt="Profile" className="object-cover w-full h-full rounded-full" />
                 </div>
                 <div className="flex flex-col justify-center min-w-0">
-                      <h1 className="text-2xl font-bold leading-tight text-left text-purple-900 whitespace-nowrap">Aantriksh Sood</h1>
-                      <p className="leading-tight text-left text-purple-600 whitespace-nowrap">Lucknow, Uttar Pradesh, India</p>
+                      <h1 className="text-2xl font-bold leading-tight text-left text-purple-900 truncate">Aantriksh Sood</h1>
+                      <p className="leading-tight text-left text-purple-600 truncate">Lucknow, Uttar Pradesh, India</p>
                   <div className="flex items-center mt-1 space-x-2">
                     <span className="text-sm text-purple-600">Pronouns:</span>
                     <span className="text-purple-700 border border-purple-300 rounded px-2 py-0.5 text-xs">She/Her</span>
@@ -92,7 +75,7 @@ export default function ProfilePage() {
           </div>
         </div>
         {/* Profile Stats */}
-        <div className="grid grid-cols-3 gap-4 mb-6">
+        <div className="grid grid-cols-1 gap-4 mb-6 sm:grid-cols-2 md:grid-cols-3">
           <div className="p-4 text-center transition-colors border border-purple-200 shadow hover:border-purple-300 rounded-xl bg-white/80">
             <Calendar className="w-6 h-6 mx-auto mb-2 text-purple-600" />
             <div className="text-lg font-semibold text-purple-900">30/10</div>

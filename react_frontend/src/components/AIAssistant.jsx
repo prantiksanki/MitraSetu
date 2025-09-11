@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Send, Bot, User, Sparkles, Moon, Sun, Mic } from "lucide-react";
 import VoiceConversationModal from './VoiceConversationModal';
 import { useConversation } from '../context/ConversationContext';
@@ -6,12 +6,68 @@ import { useConversation } from '../context/ConversationContext';
 const GEMINI_API_KEY = import.meta.env.VITE_GEMINI_API_KEY;
 
 export const AIAssistant = ({ compact = false }) => {
-  const { messages, addMessage } = useConversation();
+  const { messages, addMessage, setConversation } = useConversation();
   const [inputText, setInputText] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [isDarkMode, setIsDarkMode] = useState(false);
   // Live media panel collapsed by default (text-first UX)
   const [voiceOpen, setVoiceOpen] = useState(false);
+  const bottomRef = useRef(null);
+
+  // Simple session persistence for AI chat
+  const [sessionId, setSessionId] = useState(() => localStorage.getItem('ms_ai_current_session'));
+
+  // Initialize session and load messages
+  useEffect(() => {
+    const ensureSession = () => {
+      let id = localStorage.getItem('ms_ai_current_session');
+      if (!id) {
+        id = `ai-${Date.now()}`;
+        localStorage.setItem('ms_ai_current_session', id);
+        const sessions = JSON.parse(localStorage.getItem('ms_ai_sessions') || '[]');
+        const next = [{ id, title: 'New chat', updatedAt: Date.now() }, ...sessions];
+        localStorage.setItem('ms_ai_sessions', JSON.stringify(next));
+      }
+      setSessionId(id);
+      try {
+        const raw = localStorage.getItem(`ms_ai_messages_${id}`);
+        const loaded = raw ? JSON.parse(raw) : [];
+        if (loaded.length) setConversation(loaded);
+      } catch {}
+    };
+    ensureSession();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  // Persist messages and update sessions list
+  useEffect(() => {
+    if (!sessionId) return;
+    try {
+      localStorage.setItem(`ms_ai_messages_${sessionId}`, JSON.stringify(messages));
+      const sessions = JSON.parse(localStorage.getItem('ms_ai_sessions') || '[]');
+      const title = messages.find(m => m.role === 'user')?.text?.slice(0, 40) || 'New chat';
+      const next = [{ id: sessionId, title, updatedAt: Date.now() }, ...sessions.filter(s => s.id !== sessionId)];
+      localStorage.setItem('ms_ai_sessions', JSON.stringify(next));
+    } catch {}
+  }, [messages, sessionId]);
+
+  // React to external session switches (from ChatPage sidebar)
+  useEffect(() => {
+    const i = setInterval(() => {
+      const externalId = localStorage.getItem('ms_ai_current_session');
+      if (externalId && externalId !== sessionId) {
+        setSessionId(externalId);
+        try {
+          const raw = localStorage.getItem(`ms_ai_messages_${externalId}`);
+          setConversation(raw ? JSON.parse(raw) : []);
+        } catch { setConversation([]) }
+      }
+    }, 600);
+    return () => clearInterval(i);
+  }, [sessionId, setConversation]);
+
+  // Auto-scroll to bottom on new messages
+  useEffect(() => { bottomRef.current?.scrollIntoView({ behavior: 'smooth' }); }, [messages]);
 
   // Live / realtime removed for prototype presentation mode. Text chat only.
 
@@ -126,34 +182,47 @@ export const AIAssistant = ({ compact = false }) => {
 
   const themeClasses = isDarkMode
     ? "bg-gray-900 text-gray-100"
-    : "bg-gradient-to-br from-blue-50 to-indigo-100 text-gray-800";
+    : "bg-white text-gray-800";
 
   return (
-    <div className={`${compact ? 'w-full' : 'min-h-screen'} transition-all duration-300 ${themeClasses}`}>
-      {/* Header */}
-      <div className={`${isDarkMode ? "bg-gray-800/95 border-gray-700" : "bg-white/85 border-blue-200"} backdrop-blur border-b sticky top-0 z-20`}> 
-        <div className="max-w-4xl mx-auto px-4 py-3 flex flex-col gap-3">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-4">
-              {/* Avatar removed (live mode). Could place static icon/logo here */}
-              <div>
-                <h1 className="text-xl font-semibold">Caring AI Assistant</h1>
-                <div className="flex items-center gap-2 text-xs">
-                  <span className='text-gray-500'>Text chat mode</span>
+    <div className={`${compact ? 'w-full' : 'min-h-screen'} transition-all duration-300 ${themeClasses} flex`}>
+      {/* Sidebar history */}
+      <aside className="sticky top-24 hidden w-72 h-[calc(100vh-6rem)] px-3 bg-white border-r border-gray-200 md:block">
+        <div className="flex items-center justify-between mb-3">
+          <div className="text-sm font-bold">Chats</div>
+          <button onClick={() => {
+            const id = `ai-${Date.now()}`;
+            localStorage.setItem('ms_ai_current_session', id);
+            const sessions = JSON.parse(localStorage.getItem('ms_ai_sessions') || '[]');
+            const next = [{ id, title: 'New chat', updatedAt: Date.now() }, ...sessions];
+            localStorage.setItem('ms_ai_sessions', JSON.stringify(next));
+            setConversation([]);
+          }} className="px-2 py-1 text-xs bg-gray-100 rounded hover:bg-gray-200">New</button>
+        </div>
+        <AIAssistantHistory sessionId={sessionId} />
+      </aside>
+      <div className="flex flex-col flex-1 min-w-0">
+        {/* Header */}
+        <div className={`${isDarkMode ? "bg-gray-800/95 border-gray-700" : "bg-white/85 border-blue-200"} backdrop-blur border-b sticky top-24 z-20 w-full`}> 
+          <div className="flex flex-col max-w-4xl gap-3 px-4 py-3 mx-auto">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-4">
+                <div>
+                  <h1 className="text-xl font-semibold">Caring AI Assistant</h1>
+                  <div className="flex items-center gap-2 text-xs">
+                    <span className='text-gray-500'>Text chat mode</span>
+                  </div>
                 </div>
               </div>
-            </div>
-            <div className="flex items-center gap-2">
-        {/* Live buttons removed */}
-              <button onClick={() => setIsDarkMode(!isDarkMode)} className={`p-2 rounded-lg transition-colors ${isDarkMode? 'hover:bg-gray-700':'hover:bg-gray-200'}`}>{isDarkMode? <Sun className="w-5 h-5"/>:<Moon className="w-5 h-5"/>}</button>
+              <div className="flex items-center gap-2">
+                <button onClick={() => setIsDarkMode(!isDarkMode)} className={`p-2 rounded-lg transition-colors ${isDarkMode? 'hover:bg-gray-700':'hover:bg-gray-200'}`}>{isDarkMode? <Sun className="w-5 h-5"/>:<Moon className="w-5 h-5"/>}</button>
+              </div>
             </div>
           </div>
-      {/* Live controls removed */}
         </div>
-      </div>
 
-      {/* Chat Container */}
-  <div className={`max-w-4xl p-4 ${compact ? 'pb-6' : 'pb-32'} mx-auto`}>
+        {/* Chat Container */}
+        <div className={`p-4 ${compact ? 'pb-6' : 'pb-32'} h-full use-twemoji`}>
         {/* Messages */}
         <div className="mb-6 space-y-4">
           {messages.map((message) => (
@@ -170,39 +239,29 @@ export const AIAssistant = ({ compact = false }) => {
                     : ""
                 }`}
               >
-                <div
-                  className={`p-2 rounded-full flex-shrink-0 ${
-                    (message.role || message.sender) === "user"
-                      ? isDarkMode
-                        ? "bg-blue-600"
-                        : "bg-blue-500"
-                      : isDarkMode
-                      ? "bg-purple-600"
-                      : "bg-green-500"
-                  }`}
-                >
-                  {(message.role || message.sender) === "user" ? (
+                {((message.role || message.sender) === "user") ? (
+                  <div className={`p-2 rounded-full flex-shrink-0 ${isDarkMode ? 'bg-emerald-600' : 'bg-emerald-500'}`}>
                     <User className="w-4 h-4 text-white" />
-                  ) : (
-                    <Bot className="w-4 h-4 text-white" />
-                  )}
-                </div>
+                  </div>
+                ) : (
+                  <img src="/MitraSetu-Mascot.jpg" alt="Mitra mascot" className="flex-shrink-0 rounded-full shadow w-7 h-7" />
+                )}
                 <div
                   className={`p-4 rounded-2xl shadow-sm ${
                     (message.role || message.sender) === "user"
                       ? isDarkMode
-                        ? "bg-blue-600 text-white"
-                        : "bg-blue-500 text-white"
+                        ? "bg-emerald-600 text-white"
+                        : "bg-emerald-500 text-white"
                       : isDarkMode
                       ? "bg-gray-700 text-gray-100"
-                      : "bg-white text-gray-800"
+                      : "bg-gray-50 text-gray-800 border border-gray-200"
                   } ${(message.role || message.sender) === "user" ? "rounded-br-md" : "rounded-bl-md"}`}
                 >
                   <p className="text-sm leading-relaxed">{message.text}</p>
                   <p
                     className={`text-xs mt-2 ${
                       (message.role || message.sender) === "user"
-                        ? "text-blue-100"
+                        ? "text-emerald-100"
                         : isDarkMode
                         ? "text-gray-400"
                         : "text-gray-500"
@@ -236,11 +295,13 @@ export const AIAssistant = ({ compact = false }) => {
               </div>
             </div>
           )}
+          <div ref={bottomRef} />
         </div>
 
   {/* Modal handled media; inline panel removed */}
 
-        {/* Quick Response Buttons */}
+        {/* Quick Response Buttons - only before first user message in a session */}
+        {messages.every(m => m.role !== 'user') && (
         <div className="mb-6">
           <p
             className={`text-sm mb-3 ${
@@ -257,7 +318,7 @@ export const AIAssistant = ({ compact = false }) => {
                 className={`px-4 py-2 rounded-full text-sm transition-colors ${
                   isDarkMode
                     ? "bg-gray-700 hover:bg-gray-600 text-gray-300"
-                    : "bg-white hover:bg-gray-50 text-gray-700 shadow-sm"
+                    : "bg-gray-50 hover:bg-gray-100 text-gray-700 shadow-sm"
                 } border ${isDarkMode ? "border-gray-600" : "border-gray-200"}`}
               >
                 {response}
@@ -265,15 +326,19 @@ export const AIAssistant = ({ compact = false }) => {
             ))}
           </div>
         </div>
+        )}
+      </div>
+
+      {/* Close content column */}
       </div>
 
       {/* Input Area */}
       <div
-        className={`${compact ? 'relative mt-2 rounded-b-xl' : 'fixed bottom-0 left-0 right-0'} ${
+        className={`fixed bottom-0 left-0 right-0 ${
           isDarkMode ? 'bg-gray-800' : 'bg-white/95'
         } backdrop-blur-sm border-t ${isDarkMode ? 'border-gray-700' : 'border-gray-200'}`}
       >
-        <div className={`max-w-4xl p-4 mx-auto ${compact ? 'pt-0' : ''}`}>
+        <div className={`p-4 mx-auto ${compact ? 'pt-0' : ''}`}>
           <div className="flex space-x-3">
             <textarea
               value={inputText}
@@ -293,7 +358,7 @@ export const AIAssistant = ({ compact = false }) => {
               disabled={!inputText.trim() || isLoading}
               className={`p-4 rounded-2xl transition-all duration-200 ${
                 inputText.trim() && !isLoading
-                  ? "bg-blue-500 hover:bg-blue-600 shadow-lg hover:shadow-xl"
+                  ? "bg-emerald-500 hover:bg-emerald-600 shadow-lg hover:shadow-xl"
                   : isDarkMode
                   ? "bg-gray-600"
                   : "bg-gray-300"
@@ -327,5 +392,34 @@ export const AIAssistant = ({ compact = false }) => {
     </div>
   );
 };
+
+function AIAssistantHistory({ sessionId }) {
+  const [sessions, setSessions] = useState(() => {
+    try { return JSON.parse(localStorage.getItem('ms_ai_sessions') || '[]') } catch { return [] }
+  })
+  useEffect(() => {
+    const i = setInterval(() => {
+      try { setSessions(JSON.parse(localStorage.getItem('ms_ai_sessions') || '[]')) } catch {}
+    }, 800)
+    return () => clearInterval(i)
+  }, [])
+
+  const select = (id) => {
+    localStorage.setItem('ms_ai_current_session', id)
+  }
+
+  return (
+    <ul className="space-y-1 overflow-y-auto h-[calc(100vh-8rem)] pr-1">
+      {sessions.map(s => (
+        <li key={s.id}>
+          <button onClick={()=>select(s.id)} className={`w-full text-left px-3 py-2 rounded-lg ${sessionId===s.id?'bg-gray-100':'hover:bg-gray-50'}`}>
+            <div className="text-sm font-semibold truncate">{s.title || 'New chat'}</div>
+            <div className="text-[10px] text-gray-500">{new Date(s.updatedAt).toLocaleString()}</div>
+          </button>
+        </li>
+      ))}
+    </ul>
+  )
+}
 
 export default AIAssistant;

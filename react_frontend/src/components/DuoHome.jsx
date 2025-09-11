@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Nav } from './nav'
 import { useNavigate } from 'react-router-dom'
-import { MessageCircle, Users, Heart, ChevronRight, Calendar, TrendingUp, Flame, Star } from 'lucide-react'
+import { MessageCircle, Users, Heart, ChevronRight, Calendar, TrendingUp, Flame, Star, ThumbsUp } from 'lucide-react'
 
 // Light palette
 const colors = {
@@ -23,22 +23,22 @@ export default function DuoHome() {
   const [currentTime, setCurrentTime] = useState(new Date())
   const [hoveredCard, setHoveredCard] = useState(null)
   const stories = [
-    'A penguin walked into therapy and said: "I feel very ice-olated." The therapist smiled and said, "Let\'s warm up with a breath and talk about what\'s beneath the surface." The penguin nodded, realizing even the coldest days can soften with kindness.',
-    'Your future self is already proud you showed up today. Imagine them sending you a note: "Thank you for choosing one kind action for us. Keep going, slowly and gently—this is how we change our lives."',
-    'Two neurons met at a synapse. One said: "I feel a connection." The other replied, "Let\'s practice it daily." Our brains grow with small, repeated moments—one deep breath, one kind word, one more try.',
-    'Tiny steps are still steps. A tortoise once whispered to a mountain: "I\'ll meet you at the top." The mountain didn\'t move—but the tortoise did, one calm step at a time.'
+    'A penguin walked into therapy and said: "I feel very ice-olated." The therapist smiled and said, "Let\'s warm up with a breath and talk about what\'s beneath the surface." The penguin nodded, realizing even the coldest days can soften with kindness. Later that evening, the penguin practiced a single mindful breath before speaking to a friend, noticing how warmth can start in the smallest of places and ripple outwards.',
+    'Your future self is already proud you showed up today. Imagine them sending you a note: "Thank you for choosing one kind action for us. Keep going, slowly and gently—this is how we change our lives." That future you remembers this very moment as a turning point, when you chose care over pressure and presence over perfection.',
+    'Two neurons met at a synapse. One said: "I feel a connection." The other replied, "Let\'s practice it daily." Our brains grow with small, repeated moments—one deep breath, one kind word, one more try. With time, the path between them widened into a road, then a sturdy bridge, making calm more accessible with each practice.',
+    'Tiny steps are still steps. A tortoise once whispered to a mountain: "I\'ll meet you at the top." The mountain didn\'t move—but the tortoise did, one calm step at a time. Seasons passed, and though the peak felt distant, the tortoise discovered wildflowers, shelter, and friends along the path—the journey becoming its own soft reward.'
   ]
   const jokes = [
-    'Why did the scarecrow become a great mentor? He was outstanding in his field.',
-    'Parallel lines have so much in common. It’s a shame they’ll never meet.',
-    'I used to play piano by ear, now I use my hands.',
-    'I told my therapist I keep dreaming of a muffler. She said I’m exhausted.'
+    'Why did the scarecrow become a great mentor? He was outstanding in his field. He also offered excellent boundary-setting advice—turns out, standing your ground is a valuable life skill.',
+    'Parallel lines have so much in common. It’s a shame they’ll never meet. Still, they cheer each other on from a respectful distance—healthy relationships 101.',
+    'I used to play piano by ear, now I use my hands. My neighbors appreciate the upgrade, and my fingers say the ergonomics are a lot better too.',
+    'I told my therapist I keep dreaming of a muffler. She said I’m exhausted. We agreed I\'d take a nap and check my emissions—less noise, more rest.'
   ]
   const affirmations = [
-    'I am allowed to move at my own pace.',
-    'My feelings are valid and I can hold them with kindness.',
-    'Small actions today create big changes over time.',
-    'I choose progress over perfection.'
+    'I am allowed to move at my own pace, without comparing my path to anyone else\'s. I honor what my body and mind need, trusting that gentle consistency leads me exactly where I\'m meant to be.',
+    'My feelings are valid, and I can hold them with kindness. I am learning to listen to myself with patience, compassion, and care, even when my emotions feel complex or heavy.',
+    'Small actions today create big changes over time. I celebrate each step—no matter how tiny—as a meaningful investment in my well-being and future self.',
+    'I choose progress over perfection. I release pressure to get everything right and focus instead on showing up with honesty, curiosity, and heart.'
   ]
   const [storyIdx, setStoryIdx] = useState(0)
   const [jokeIdx, setJokeIdx] = useState(0)
@@ -62,9 +62,9 @@ export default function DuoHome() {
   }, [])
 
   useEffect(() => {
-    const s = setInterval(() => setStoryIdx((i) => (i + 1) % stories.length), 7000)
-    const j = setInterval(() => setJokeIdx((i) => (i + 1) % jokes.length), 9000)
-    const a = setInterval(() => setAffirmIdx((i) => (i + 1) % affirmations.length), 6000)
+    const s = setInterval(() => setStoryIdx((i) => (i + 1) % stories.length), 1000000)
+    const j = setInterval(() => setJokeIdx((i) => (i + 1) % jokes.length), 1000000)
+    const a = setInterval(() => setAffirmIdx((i) => (i + 1) % affirmations.length), 1000000)
     return () => { clearInterval(s); clearInterval(j); clearInterval(a) }
   }, [])
 
@@ -111,6 +111,46 @@ export default function DuoHome() {
     } catch { return [] }
   })
 
+  // likes state persisted per card id
+  const [likes, setLikes] = useState(() => {
+    try {
+      const saved = localStorage.getItem('mitrasetu_likes')
+      return saved ? JSON.parse(saved) : {}
+    } catch { return {} }
+  })
+
+  const toggleLike = (id) => {
+    setLikes((prev) => {
+      const current = prev[id] || { liked: false, count: 0 }
+      const nextState = {
+        ...prev,
+        [id]: {
+          liked: !current.liked,
+          count: Math.max(0, current.count + (!current.liked ? 1 : -1))
+        }
+      }
+      localStorage.setItem('mitrasetu_likes', JSON.stringify(nextState))
+      return nextState
+    })
+  }
+
+  // comments state persisted per card id
+  const [comments, setComments] = useState(() => {
+    try {
+      const saved = localStorage.getItem('mitrasetu_comments')
+      return saved ? JSON.parse(saved) : {}
+    } catch { return {} }
+  })
+
+  const addComment = (id, text) => {
+    setComments((prev) => {
+      const current = prev[id] || []
+      const nextState = { ...prev, [id]: [{ id: Date.now(), text }, ...current] }
+      localStorage.setItem('mitrasetu_comments', JSON.stringify(nextState))
+      return nextState
+    })
+  }
+
   const addPost = (text) => {
     const newPost = { id: Date.now(), text }
     const next = [newPost, ...posts]
@@ -122,12 +162,12 @@ export default function DuoHome() {
     <div className={`${colors.bg} ${colors.text} min-h-screen`}>
       <Nav />
       <DashboardMascotOverlay position={position} isFloating={isFloating} showMessage={showMessage} currentMessage={currentMessage} handleMascotClick={handleMascotClick} mascotImage={mascotImage} />
-      <main className="pt-6 px-6 md:pl-64 max-w-7xl mx-auto">
-        <div className="grid grid-cols-1 lg:grid-cols-[1fr_320px] gap-6">
+      <main className="px-6 pt-6 mx-auto md:pl-64 max-w-7xl">
+        <div className="grid grid-cols-1 lg:grid-cols-[1.25fr_300px] gap-5">
           {/* Center content - all features from MentalHealthHome with new skin */}
           <section className={`rounded-2xl ${colors.card} border ${colors.border} p-6 relative overflow-hidden`}>
             {/* Mascot image floating in the background */}
-            <img src="/mascot.png" alt="MitraSetu mascot" className="hidden md:block absolute -right-16 -top-20 w-64 opacity-10 pointer-events-none select-none" />
+            <img src="/mascot.png" alt="MitraSetu mascot" className="absolute hidden w-64 pointer-events-none select-none md:block -right-16 -top-20 opacity-10" />
 
             {/* Welcome strip (Duolingo-like pill) */}
             <div className="mb-6">
@@ -141,10 +181,10 @@ export default function DuoHome() {
                 <div className="flex items-center gap-2"><Calendar size={18} className="text-[#7FB3FF]" /><span className="font-semibold">Today's Check-in</span></div>
                 <span className={`text-sm ${colors.sub}`}>{currentTime.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })}</span>
               </div>
-              <div className="grid grid-cols-2 sm:grid-cols-5 gap-3">
+              <div className="grid grid-cols-2 gap-3 sm:grid-cols-5">
                 {moods.map((m, i) => (
                   <button key={i} onClick={() => setSelectedMood(m)} className={`group relative p-4 rounded-xl border ${colors.border} ${selectedMood?.label===m.label? m.color+' text-white':'hover:bg-[#161C28]'} transition`}> 
-                    <div className="text-2xl mb-1">{m.emoji}</div>
+                    <div className="mb-1 text-2xl">{m.emoji}</div>
                     <div className={`text-xs ${selectedMood?.label===m.label?'text-white':colors.sub}`}>{m.label}</div>
                   </button>
                 ))}
@@ -155,11 +195,44 @@ export default function DuoHome() {
             <div id="post-tip" className="mb-6 space-y-6">
               <PostComposer onPost={addPost} />
               {posts.map(p => (
-                <FeedCard key={p.id} title="Community Tip" content={p.text} />
+                <FeedCard
+                  key={p.id}
+                  id={`post-${p.id}`}
+                  title="Community Tip"
+                  content={p.text}
+                  like={likes[`post-${p.id}`]}
+                  onToggleLike={() => toggleLike(`post-${p.id}`)}
+                  comments={comments[`post-${p.id}`] || []}
+                  onAddComment={(text) => addComment(`post-${p.id}`, text)}
+                />
               ))}
-              <FeedCard title="Daily Affirmation" content={affirmations[affirmIdx]} />
-              <FeedCard title="Daily Joke" content={jokes[jokeIdx]} />
-              <FeedCard title="Daily Story" content={stories[storyIdx]} />
+              <FeedCard
+                id={`affirmation-${affirmIdx}`}
+                title="Daily Affirmation"
+                content={affirmations[affirmIdx]}
+                like={likes[`affirmation-${affirmIdx}`]}
+                onToggleLike={() => toggleLike(`affirmation-${affirmIdx}`)}
+                comments={comments[`affirmation-${affirmIdx}`] || []}
+                onAddComment={(text) => addComment(`affirmation-${affirmIdx}`, text)}
+              />
+              <FeedCard
+                id={`joke-${jokeIdx}`}
+                title="Daily Joke"
+                content={jokes[jokeIdx]}
+                like={likes[`joke-${jokeIdx}`]}
+                onToggleLike={() => toggleLike(`joke-${jokeIdx}`)}
+                comments={comments[`joke-${jokeIdx}`] || []}
+                onAddComment={(text) => addComment(`joke-${jokeIdx}`, text)}
+              />
+              <FeedCard
+                id={`story-${storyIdx}`}
+                title="Daily Story"
+                content={stories[storyIdx]}
+                like={likes[`story-${storyIdx}`]}
+                onToggleLike={() => toggleLike(`story-${storyIdx}`)}
+                comments={comments[`story-${storyIdx}`] || []}
+                onAddComment={(text) => addComment(`story-${storyIdx}`, text)}
+              />
             </div>
 
             {/* Live media controls (simple, rich but clean) */}
@@ -177,7 +250,7 @@ export default function DuoHome() {
                 <div className="flex items-center gap-2"><TrendingUp size={18} className="text-[#7FB3FF]" /><span className="font-semibold">Weekly Progress</span></div>
                 <span className={`text-sm ${colors.sub}`}>Last 7 days</span>
               </div>
-              <div className="grid grid-cols-7 gap-2 h-40 items-end">
+              <div className="grid items-end h-40 grid-cols-7 gap-2">
                 {moodData.map((d, i) => (
                   <div key={i} className="flex flex-col items-center">
                     <div className={`w-6 ${d.color} rounded-t`} style={{ height: `${d.mood * 10}px` }}></div>
@@ -190,23 +263,23 @@ export default function DuoHome() {
               <div className="flex items-center justify-between mb-4">
                 <div className="flex items-center gap-2"><Flame size={18} className="text-orange-400" /><span className="font-semibold">Achievements</span></div>
               </div>
-              <div className="text-center mb-4">
+              <div className="mb-4 text-center">
                 <div className="relative inline-flex items-center justify-center w-20 h-20 rounded-full shadow-lg bg-gradient-to-r from-orange-400 to-red-500">
-                  <span className="text-2xl text-white font-bold">{streak}</span>
+                  <span className="text-2xl font-bold text-white">{streak}</span>
                   <div className="absolute rounded-full -inset-1 bg-gradient-to-r from-orange-400 to-red-500 opacity-20 animate-pulse"></div>
                 </div>
                 <p className={`text-sm mt-2 ${colors.sub}`}>Day streak! Keep it up! 🔥</p>
               </div>
               <div className="space-y-3">
-                <div className="flex items-center p-3 gap-3 rounded-xl bg-gray-50">
-                  <div className="w-8 h-8 rounded-full bg-blue-500 flex items-center justify-center"><Star size={16} className="text-white" /></div>
+                <div className="flex items-center gap-3 p-3 rounded-xl bg-gray-50">
+                  <div className="flex items-center justify-center w-8 h-8 bg-blue-500 rounded-full"><Star size={16} className="text-white" /></div>
                   <div>
                     <div className="text-sm font-medium">Week Warrior</div>
                     <div className={`text-xs ${colors.sub}`}>7 days of consistent check-ins</div>
                   </div>
                 </div>
-                <div className="flex items-center p-3 gap-3 rounded-xl bg-emerald-50">
-                  <div className="w-8 h-8 rounded-full bg-emerald-500 flex items-center justify-center"><Heart size={16} className="text-white" /></div>
+                <div className="flex items-center gap-3 p-3 rounded-xl bg-emerald-50">
+                  <div className="flex items-center justify-center w-8 h-8 rounded-full bg-emerald-500"><Heart size={16} className="text-white" /></div>
                   <div>
                     <div className="text-sm font-medium">Self-Care Champion</div>
                     <div className={`text-xs ${colors.sub}`}>Completed mindfulness exercise</div>
@@ -221,7 +294,7 @@ export default function DuoHome() {
                 <span className="text-xs text-gray-500">Today</span>
               </div>
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-full bg-yellow-400" />
+                <div className="w-10 h-10 bg-yellow-400 rounded-full" />
                 <div>
                   <div className="text-xl font-bold">500</div>
                   <div className="text-xs text-gray-500">Keep collecting by completing tips</div>
@@ -236,11 +309,65 @@ export default function DuoHome() {
 }
 
 // Instagram-like feed components
-function FeedCard({ title, content }) {
+function FeedCard({ id, title, content, like, onToggleLike, comments = [], onAddComment }) {
+  const liked = like?.liked || false
+  const likeCount = like?.count || 0
+  const [commentText, setCommentText] = React.useState('')
+  const handleAddComment = () => {
+    const text = commentText.trim()
+    if (!text) return
+    onAddComment?.(text)
+    setCommentText('')
+  }
+
   return (
-    <div className="p-6 border border-gray-200 rounded-2xl bg-white">
-      <div className="mb-3 text-lg font-semibold">{title}</div>
-      <p className="text-xl leading-relaxed text-gray-700">{content}</p>
+    <div className="p-6 bg-white border border-gray-200 rounded-2xl use-twemoji">
+      <div className="mb-2 text-lg font-semibold">{title}</div>
+      <p className="text-xl leading-relaxed text-gray-700 reading-prose">{content}</p>
+
+      {/* Action bar */}
+      <div className="pt-3 mt-4 border-t border-gray-200">
+        <div className="flex items-center gap-4 text-gray-600">
+          <button
+            onClick={onToggleLike}
+            className={`inline-flex items-center gap-2 text-sm font-medium hover:opacity-90 ${liked ? 'text-[#1877F2]' : ''}`}
+          >
+            <ThumbsUp size={18} className={liked ? 'fill-[#1877F2] text-[#1877F2]' : ''} />
+            <span>Like</span>
+            <span className="text-gray-400">{likeCount > 0 ? likeCount : ''}</span>
+          </button>
+
+          <div className="inline-flex items-center gap-2 text-sm">
+            <MessageCircle size={18} />
+            <span>Comment</span>
+            <span className="text-gray-400">{comments.length > 0 ? comments.length : ''}</span>
+          </div>
+        </div>
+      </div>
+
+      {/* Comments */}
+      <div className="mt-3 space-y-3">
+        <div className="flex items-center gap-2">
+          <input
+            value={commentText}
+            onChange={(e) => setCommentText(e.target.value)}
+            onKeyDown={(e) => { if (e.key === 'Enter') handleAddComment() }}
+            placeholder="Write a comment..."
+            className="flex-1 px-3 py-2 text-sm border border-gray-200 rounded-full bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+          />
+          <button onClick={handleAddComment} className="px-3 py-2 text-sm font-semibold text-white bg-indigo-600 rounded-full hover:bg-indigo-700">Post</button>
+        </div>
+        {comments.length > 0 && (
+          <div className="space-y-2">
+            {comments.map((c) => (
+              <div key={c.id} className="flex items-start gap-2">
+                <div className="bg-gray-200 rounded-full w-7 h-7" />
+                <div className="px-3 py-2 text-sm text-gray-800 bg-gray-100 rounded-2xl reading-prose">{c.text}</div>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
     </div>
   )
 }
@@ -250,14 +377,14 @@ export function DashboardMascotOverlay({ position, isFloating, showMessage, curr
   return (
     <div className="fixed inset-0 pointer-events-none z-[60] opacity-85">
       <motion.div
-        className="absolute pointer-events-auto cursor-pointer"
+        className="absolute cursor-pointer pointer-events-auto"
         animate={{ x: position.x, y: position.y, rotate: isFloating ? [0, 2, -2, 0] : 0 }}
         transition={{ x: { type: 'spring', stiffness: 50, damping: 15, duration: 3 }, y: { type: 'spring', stiffness: 50, damping: 15, duration: 3 }, rotate: { duration: 4, ease: 'easeInOut', repeat: Infinity } }}
         style={{ width: 100, height: 100 }}
         onClick={handleMascotClick}
       >
         <motion.div
-          className="absolute inset-0 bg-gradient-to-r from-purple-300 to-pink-300 rounded-full blur-xl opacity-30"
+          className="absolute inset-0 rounded-full bg-gradient-to-r from-purple-300 to-pink-300 blur-xl opacity-30"
           animate={{ scale: [1, 1.2, 1], opacity: [0.3, 0.5, 0.3] }}
           transition={{ duration: 3, repeat: Infinity, ease: 'easeInOut' }}
         />
@@ -269,21 +396,21 @@ export function DashboardMascotOverlay({ position, isFloating, showMessage, curr
           whileTap={{ scale: 0.95 }}
         >
           <img src={mascotImage} alt="MitraSetu Mascot" className="w-24 h-24 drop-shadow-2xl" />
-          <motion.div className="absolute -top-2 -right-2 text-yellow-400" animate={{ scale: [0, 1, 0], rotate: [0, 180, 360] }} transition={{ duration: 2, repeat: Infinity, delay: 1 }}>✨</motion.div>
-          <motion.div className="absolute -bottom-1 -left-2 text-pink-400" animate={{ scale: [0, 1, 0], rotate: [0, -180, -360] }} transition={{ duration: 2, repeat: Infinity, delay: 0.5 }}>💫</motion.div>
+          <motion.div className="absolute text-yellow-400 -top-2 -right-2" animate={{ scale: [0, 1, 0], rotate: [0, 180, 360] }} transition={{ duration: 2, repeat: Infinity, delay: 1 }}>✨</motion.div>
+          <motion.div className="absolute text-pink-400 -bottom-1 -left-2" animate={{ scale: [0, 1, 0], rotate: [0, -180, -360] }} transition={{ duration: 2, repeat: Infinity, delay: 0.5 }}>💫</motion.div>
         </motion.div>
         <AnimatePresence>
           {showMessage && currentMessage && (
-            <motion.div initial={{ opacity: 0, scale: 0.5, y: 20 }} animate={{ opacity: 1, scale: 1, y: 0 }} exit={{ opacity: 0, scale: 0.5, y: 20 }} className="absolute -top-20 left-1/2 transform -translate-x-1/2 min-w-64 max-w-80">
-              <div className="relative bg-gradient-to-br from-white/95 to-purple-50/95 backdrop-blur-md border-2 border-purple-200/50 rounded-3xl p-4 shadow-2xl">
+            <motion.div initial={{ opacity: 0, scale: 0.5, y: 20 }} animate={{ opacity: 1, scale: 1, y: 0 }} exit={{ opacity: 0, scale: 0.5, y: 20 }} className="absolute transform -translate-x-1/2 -top-20 left-1/2 min-w-64 max-w-80">
+              <div className="relative p-4 border-2 shadow-2xl bg-gradient-to-br from-white/95 to-purple-50/95 backdrop-blur-md border-purple-200/50 rounded-3xl">
                 <div className="flex items-start gap-2">
                   <span className="text-lg">{currentMessage.emoji}</span>
-                  <p className="text-sm text-purple-800 leading-relaxed">{currentMessage.message}</p>
+                  <p className="text-sm leading-relaxed text-purple-800">{currentMessage.message}</p>
                 </div>
-                <div className="absolute bottom-0 left-1/2 transform -translate-x-1/2 translate-y-1/2">
-                  <div className="w-4 h-4 bg-gradient-to-br from-white/95 to-purple-50/95 border-r-2 border-b-2 border-purple-200/50 rotate-45" />
+                <div className="absolute bottom-0 transform -translate-x-1/2 translate-y-1/2 left-1/2">
+                  <div className="w-4 h-4 rotate-45 border-b-2 border-r-2 bg-gradient-to-br from-white/95 to-purple-50/95 border-purple-200/50" />
                 </div>
-                <motion.div className="absolute -top-2 -right-2 text-pink-400" animate={{ y: [0, -10, 0], opacity: [0.5, 1, 0.5] }} transition={{ duration: 1.5, repeat: Infinity }}>💖</motion.div>
+                <motion.div className="absolute text-pink-400 -top-2 -right-2" animate={{ y: [0, -10, 0], opacity: [0.5, 1, 0.5] }} transition={{ duration: 1.5, repeat: Infinity }}>💖</motion.div>
               </div>
             </motion.div>
           )}
@@ -296,7 +423,7 @@ export function DashboardMascotOverlay({ position, isFloating, showMessage, curr
 function PostComposer({ onPost }) {
   const [text, setText] = React.useState('')
   return (
-    <div className="p-4 border border-gray-200 rounded-2xl bg-white">
+    <div className="p-4 bg-white border border-gray-200 rounded-2xl">
       <div className="mb-2 font-semibold">Share a health tip</div>
       <textarea
         value={text}
@@ -324,27 +451,27 @@ function SimpleLiveStarter() {
   const [cam, setCam] = React.useState(false)
   const [scr, setScr] = React.useState(false)
   return (
-    <div className="p-6 border border-gray-200 rounded-2xl bg-white">
+    <div className="p-6 bg-white border border-gray-200 rounded-2xl">
       <div className="mb-3 text-lg font-semibold">Live with AI Mitra</div>
-      <p className="text-sm text-gray-600 mb-4">Start a simple live session. You can enable audio, video, or screen share. Opens a clean preview modal.</p>
+      <p className="mb-4 text-sm text-gray-600">Start a simple live session. You can enable audio, video, or screen share. Opens a clean preview modal.</p>
       <div className="flex gap-3">
         <button onClick={()=>setMic(v=>!v)} className={`px-3 py-2 text-sm rounded ${mic? 'bg-green-600 text-white':'bg-gray-100 text-gray-800'}`}>{mic? 'Mic On':'Mic Off'}</button>
         <button onClick={()=>setCam(v=>!v)} className={`px-3 py-2 text-sm rounded ${cam? 'bg-green-600 text-white':'bg-gray-100 text-gray-800'}`}>{cam? 'Camera On':'Camera Off'}</button>
         <button onClick={()=>setScr(v=>!v)} className={`px-3 py-2 text-sm rounded ${scr? 'bg-green-600 text-white':'bg-gray-100 text-gray-800'}`}>{scr? 'Sharing':'Share Screen'}</button>
-        <button onClick={()=>setOpen(true)} className="ml-auto px-4 py-2 text-sm font-semibold text-white bg-indigo-600 rounded-md hover:bg-indigo-700">Open Preview</button>
+        <button onClick={()=>setOpen(true)} className="px-4 py-2 ml-auto text-sm font-semibold text-white bg-indigo-600 rounded-md hover:bg-indigo-700">Open Preview</button>
       </div>
       {/* Minimal inline modal */}
       {open && (
         <div className="fixed inset-0 z-40 flex items-center justify-center">
           <div className="absolute inset-0 bg-black/40" onClick={()=>setOpen(false)} />
-          <div className="relative bg-white border border-gray-200 rounded-2xl shadow-xl w-full max-w-3xl p-4">
+          <div className="relative w-full max-w-3xl p-4 bg-white border border-gray-200 shadow-xl rounded-2xl">
             <div className="flex items-center justify-between mb-3">
               <div className="text-sm font-semibold">Live Session Preview</div>
               <button onClick={()=>setOpen(false)} className="text-gray-500 hover:text-gray-800">Close</button>
             </div>
-            <div className="grid md:grid-cols-2 gap-4">
-              <div className="aspect-video bg-gray-100 rounded-lg overflow-hidden flex items-center justify-center">
-                <video ref={videoRef} autoPlay muted playsInline className="w-full h-full object-cover" />
+            <div className="grid gap-4 md:grid-cols-2">
+              <div className="flex items-center justify-center overflow-hidden bg-gray-100 rounded-lg aspect-video">
+                <video ref={videoRef} autoPlay muted playsInline className="object-cover w-full h-full" />
                 {!cam && !scr && <span className="text-xs text-gray-500">Camera / Screen feed</span>}
               </div>
               <div className="text-sm text-gray-600">

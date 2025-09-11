@@ -30,8 +30,12 @@ export function ConversationProvider({ children }) {
 
   const clearConversation = useCallback(() => setMessages([]), []);
 
+  const setConversation = useCallback((newMessages) => {
+    setMessages(Array.isArray(newMessages) ? newMessages : []);
+  }, []);
+
   return (
-    <ConversationContext.Provider value={{ messages, addMessage, replaceLastAIChunkAppend, clearConversation }}>
+    <ConversationContext.Provider value={{ messages, addMessage, replaceLastAIChunkAppend, clearConversation, setConversation }}>
       {children}
     </ConversationContext.Provider>
   );
