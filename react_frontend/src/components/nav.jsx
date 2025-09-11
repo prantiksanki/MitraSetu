@@ -4,6 +4,8 @@ import { useAuth0 } from "@auth0/auth0-react";
 import { Home as HomeIcon, BookOpen, Users, User, PlusSquare, Video, Shield, ShoppingBag, Trophy, MessageCircleMore, Ellipsis, ChevronLeft, ChevronRight } from 'lucide-react';
 
 
+
+
 export function Nav() {
   const location = useLocation();
   const navItems = [
@@ -12,7 +14,8 @@ export function Nav() {
     { name: 'Resources', path: '/resources' },
     { name: 'Profile', path: '/profile' }
   ];
-    const { logout } = useAuth0();
+
+  const { logout } = useAuth0();
 const origin = window.location.origin;
 
   const handleLogout = () => {
