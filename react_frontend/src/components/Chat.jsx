@@ -215,10 +215,10 @@ const Chat = ({ socket, roomId, onLeaveRoom }) => {
   }
 
   return (
-    <div className="flex items-center justify-center min-h-screen p-6 text-gray-900 bg-gray-50">
-      <div className="w-full max-w-4xl flex flex-col h-[720px] bg-white border border-gray-200 rounded-xl">
+    <div className="flex items-stretch justify-center w-full h-full p-0 text-gray-900 bg-gray-50">
+      <div className="w-full flex flex-col h-[calc(100vh-7rem)] bg-white border-x border-gray-200">
         {/* Header */}
-        <div className="px-4 py-3 bg-white border-b border-gray-200 rounded-t-xl">
+        <div className="px-4 py-3 bg-white border-b border-gray-200">
           <div className="flex items-center justify-between">
             <div className="min-w-0">
               <div className="flex items-center gap-2">
@@ -295,7 +295,7 @@ const Chat = ({ socket, roomId, onLeaveRoom }) => {
         </div>
 
         {/* Input */}
-        <div className="px-4 py-3 bg-white border-t border-gray-200 rounded-b-xl">
+        <div className="px-4 py-3 bg-white border-t border-gray-200">
           <div className="relative flex gap-2">
             <div className="relative flex-1">
               <input

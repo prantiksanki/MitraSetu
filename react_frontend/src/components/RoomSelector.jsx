@@ -77,8 +77,8 @@ const RoomSelector = ({ onJoinRoom, socket }) => {
   };
 
   return (
-    <div className="min-h-screen text-gray-900 bg-gray-50">
-      <div className="flex h-screen">
+    <div className="h-full text-gray-900 bg-gray-50">
+      <div className="flex h-full">
         {/* Left sidebar (rooms) */}
         <aside className="flex flex-col bg-white border-r border-gray-200 w-72">
           {/* Header */}

@@ -1,5 +1,7 @@
+import React from 'react'
 import { Link, useLocation } from 'react-router-dom';
 import { useAuth0 } from "@auth0/auth0-react";
+import { Home as HomeIcon, BookOpen, Users, User, PlusSquare, Video } from 'lucide-react';
 
 export function Nav() {
   const location = useLocation();
@@ -20,20 +22,29 @@ const origin = window.location.origin;
     });
   };
 
+  // On /home, hide the top bar and only render sidebar
+  if (location.pathname === '/home') {
+    return (
+      <nav className="fixed top-0 left-0 z-50 w-full">
+        <SidebarHome pathname={location.pathname} />
+      </nav>
+    );
+  }
+
   return (
-    <nav className="fixed top-0 left-0 z-50 flex items-center justify-between w-full px-6 py-4 shadow-lg bg-gradient-to-r from-purple-100 via-blue-100 to-purple-50 rounded-b-3xl">
+    <nav className="fixed top-0 left-0 z-50 flex items-center justify-between w-full px-6 py-4 shadow-lg bg-white border-b border-gray-200">
       <div className="flex items-center space-x-3">
-        <span className="text-3xl font-bold tracking-tight text-purple-700 drop-shadow-sm">MitraSetu</span>
+        <img src="/colored-logo.png" alt="MitraSetu" className="h-8 w-auto" />
       </div>
-      <ul className="flex space-x-8">
+      <ul className="flex space-x-6">
         {navItems.map(item => (
           <li key={item.name}>
             <Link
               to={item.path}
-              className={`text-lg font-medium px-4 py-2 rounded-xl transition-all duration-200 
+              className={`text-sm font-medium px-3 py-2 rounded-md transition 
                 ${location.pathname === item.path
-                  ? 'bg-purple-300/40 text-purple-900 shadow-md'
-                  : 'text-purple-700 hover:bg-purple-200/40 hover:text-purple-900'}
+                  ? 'bg-gray-100 text-gray-900'
+                  : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'}
               `}
             >
               {item.name}
@@ -42,7 +53,7 @@ const origin = window.location.origin;
         ))}
       </ul>
       <div className="flex items-center space-x-2">
-        <button className="px-5 py-2 font-semibold text-white transition-all duration-200 bg-purple-700 shadow-md rounded-xl hover:bg-purple-800"
+        <button className="px-4 py-2 text-sm font-semibold text-white transition bg-indigo-600 rounded-md hover:bg-indigo-700"
          onClick={handleLogout}
         >Sign Out</button>
       </div>
@@ -51,3 +62,35 @@ const origin = window.location.origin;
 }
 
 export default Nav;
+
+function SidebarHome({ pathname }) {
+  const [collapsed, setCollapsed] = React.useState(false)
+  return (
+    <div className={`fixed left-0 top-0 h-full ${collapsed ? 'w-16' : 'w-64'} px-4 py-6 bg-white text-gray-900 border-r border-gray-200 hidden md:block transition-all`}>
+      <div className="mb-6 px-2 flex items-center justify-between">
+        <img src="/colored-logo.png" alt="MitraSetu" className="h-10 w-auto" />
+        <button onClick={()=>setCollapsed(c=>!c)} className="text-xs px-2 py-1 rounded bg-gray-100 hover:bg-gray-200">{collapsed? '>' : '<'}</button>
+      </div>
+      <div className="space-y-2">
+        <Link to="/home" className={`flex items-center gap-3 px-4 py-3 rounded-xl ${pathname === '/home' ? 'bg-gray-100' : 'hover:bg-gray-50'}`}>
+          <HomeIcon size={18} /> {!collapsed && <span className="font-semibold">Home</span>}
+        </Link>
+        <a href="#post-tip" className="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-gray-50">
+          <PlusSquare size={18} /> {!collapsed && <span className="font-semibold">Post Health Tip</span>}
+        </a>
+        <Link to="/live" className={`flex items-center gap-3 px-4 py-3 rounded-xl ${pathname === '/live' ? 'bg-gray-100' : 'hover:bg-gray-50'}`}>
+          <Video size={18} /> {!collapsed && <span className="font-semibold">Live with Mitra</span>}
+        </Link>
+        <Link to="/journey" className={`flex items-center gap-3 px-4 py-3 rounded-xl ${pathname === '/journey' ? 'bg-gray-100' : 'hover:bg-gray-50'}`}>
+          <BookOpen size={18} /> {!collapsed && <span className="font-semibold">Journey</span>}
+        </Link>
+        <Link to="/resources" className={`flex items-center gap-3 px-4 py-3 rounded-xl ${pathname === '/resources' ? 'bg-gray-100' : 'hover:bg-gray-50'}`}>
+          <Users size={18} /> {!collapsed && <span className="font-semibold">Resources</span>}
+        </Link>
+        <Link to="/profile" className={`flex items-center gap-3 px-4 py-3 rounded-xl ${pathname === '/profile' ? 'bg-gray-100' : 'hover:bg-gray-50'}`}>
+          <User size={18} /> {!collapsed && <span className="font-semibold">Profile</span>}
+        </Link>
+      </div>
+    </div>
+  )
+}

@@ -45,7 +45,7 @@ const PeerChat = () => {
   return (
     <div className="min-h-screen bg-gradient-to-b from-white to-gray-50">
       <Nav />
-      <main className="max-w-6xl px-4 pb-8 mx-auto pt-28">
+      <main className="w-full px-0 pt-28 h-[calc(100vh-7rem)]">
         {currentRoom ? (
           <Chat 
             socket={socket} 
