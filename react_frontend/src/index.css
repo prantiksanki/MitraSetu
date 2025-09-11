@@ -2,24 +2,7 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Optional: self-host commercial fonts if available under /public/fonts */
-@font-face {
-  font-family: 'DIN Next Rounded';
-  src: url('/fonts/din-next-rounded.woff2') format('woff2'),
-       url('/fonts/din-next-rounded.woff') format('woff');
-  font-weight: 300 800;
-  font-style: normal;
-  font-display: swap;
-}
-
-@font-face {
-  font-family: 'Feather';
-  src: url('/fonts/feather-bold.woff2') format('woff2'),
-       url('/fonts/feather-bold.woff') format('woff');
-  font-weight: 700;
-  font-style: normal;
-  font-display: swap;
-}
+/* Removed self-hosted font-face to avoid 404/OTS errors when files are missing */
 
 body {
   margin: 0;

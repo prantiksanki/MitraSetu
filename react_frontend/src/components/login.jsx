@@ -14,15 +14,21 @@ function Login() {
     confirmPassword: '' 
   })
   const navigate = useNavigate()
-
-
-  const { user, isAuthenticated, isLoading, loginWithRedirect } = useAuth0()
-  console.log(user, isAuthenticated, isLoading)
+  const { user, isAuthenticated, isLoading, loginWithRedirect, error } = useAuth0()
 
   // Redirect after auth in effect to avoid setState during render warning
   useEffect(() => {
     if (isAuthenticated) navigate('/home')
   }, [isAuthenticated, navigate])
+
+  if (error) {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-screen text-purple-700">
+        <div className="mb-2 font-semibold">Authentication error</div>
+        <div className="text-sm opacity-80">{String(error.message || 'Something went wrong')}</div>
+      </div>
+    )
+  }
 
   if (isLoading) {
     return <div className="flex items-center justify-center min-h-screen text-purple-600">Loading…</div>
@@ -60,12 +66,9 @@ function Login() {
         style={{
           background: 'linear-gradient(135deg, #8B5CF6 0%, #EC4899 50%, #F59E0B 100%)',
         }}
-        animate={{ 
-          scale: [1, 1.05, 1],
-          rotate: [0, 2, -2, 0]
-        }}
+        animate={{ scale: [1, 1.03, 1] }}
         transition={{ 
-          duration: 4, 
+          duration: 6, 
           repeat: Infinity, 
           ease: "easeInOut" 
         }}
@@ -73,15 +76,14 @@ function Login() {
         {/* Mascot face */}
         <motion.div
           className="relative flex items-center justify-center w-64 h-64 overflow-hidden bg-white rounded-full"
-          animate={{ 
-            scale: [1, 1.02, 1]
-          }}
+          animate={{ scale: [1, 1.01, 1] }}
           transition={{ 
-            duration: 3, 
+            duration: 6, 
             repeat: Infinity, 
             ease: "easeInOut" 
           }}
         >
+          
           {/* Eyes */}
           <div className="absolute flex space-x-8 top-20 left-16">
             <motion.div 
@@ -90,7 +92,7 @@ function Login() {
                 scaleY: [1, 0.1, 1]
               }}
               transition={{ 
-                duration: 3, 
+                duration: 4, 
                 repeat: Infinity, 
                 repeatDelay: 2 
               }}
@@ -101,7 +103,7 @@ function Login() {
                 scaleY: [1, 0.1, 1]
               }}
               transition={{ 
-                duration: 3, 
+                duration: 4, 
                 repeat: Infinity, 
                 repeatDelay: 2 
               }}
@@ -111,11 +113,9 @@ function Login() {
           {/* Smile */}
           <motion.div 
             className="absolute w-16 h-8 border-4 border-t-0 border-black rounded-b-full bottom-20"
-            animate={{ 
-              scale: [1, 1.1, 1]
-            }}
+            animate={{ scale: [1, 1.05, 1] }}
             transition={{ 
-              duration: 2, 
+              duration: 4, 
               repeat: Infinity, 
               ease: "easeInOut" 
             }}
@@ -130,12 +130,9 @@ function Login() {
         <motion.div
           className="absolute right-0 w-24 h-8 origin-left rounded-full top-32 bg-gradient-to-r from-purple-500 to-pink-500"
           style={{ transformOrigin: 'left center' }}
-          animate={{ 
-            rotate: [-10, 5, -10],
-            scaleX: [1, 1.1, 1]
-          }}
+          animate={{ rotate: [-5, 3, -5], scaleX: [1, 1.05, 1] }}
           transition={{ 
-            duration: 2, 
+            duration: 4, 
             repeat: Infinity, 
             ease: "easeInOut" 
           }}
