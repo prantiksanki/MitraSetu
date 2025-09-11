@@ -273,7 +273,7 @@ function MascotWithAnimation({ className = "", staticImageSrc, alt, lottieData }
   )
 }
 
-export default function OnboardingFlow({ lottieAnimationData, onComplete, redirectPath = "/dashboard" }) {
+export default function OnboardingFlow({ lottieAnimationData, onComplete, redirectPath = "/home" }) {
   const [currentStep, setCurrentStep] = useState(1)
   const [isAnimating, setIsAnimating] = useState(false)
   const [profile, setProfile] = useState({})
@@ -446,7 +446,10 @@ export default function OnboardingFlow({ lottieAnimationData, onComplete, redire
           <div className="mt-8 text-center">
             <p className="text-purple-600 text-balance leading-relaxed font-medium">
               {currentStep === 1 &&
-                "Hi there! I'm MitrAI, here to help you on your mental wellbeing journey with MitraSetu."}
+                <>
+                  <b>Hi there! I'm Meetu!</b><br></br>Your AI Mitr, here to help you on your mental wellbeing journey with MitraSetu.
+                </>
+  }
               {currentStep === 2 && "What should I call you?"}
               {currentStep === 3 && "Do you have a nickname you prefer?"}
               {currentStep === 4 && "How do you identify?"}

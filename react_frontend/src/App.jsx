@@ -8,6 +8,8 @@ import Home from './pages/Home'
 import ChatPage from './pages/ChatPage'
 import PeerChat from './pages/PeerChat';
 import Landing from './pages/Landing';
+import LivePage from './pages/LivePage';
+import Onboarding from './pages/Onboarding';
 
 
 function App() {
