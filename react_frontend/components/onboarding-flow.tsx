@@ -60,6 +60,16 @@ export default function OnboardingFlow({
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0)
   const [lottieData, setLottieData] = useState<any>(null)
 
+  // Force light mode on onboarding
+  useEffect(() => {
+    try {
+      document.documentElement.classList.remove("dark")
+      // If an external theme preference exists, set it to light
+      // This is safe even if next-themes is not used in this runtime
+      localStorage.setItem("theme", "light")
+    } catch {}
+  }, [])
+
   useEffect(() => {
     // Load the Lottie JSON file
     fetch("/animations/mascot-hover.json")
@@ -172,9 +182,9 @@ export default function OnboardingFlow({
 
   const renderMascotArea = () => {
     return (
-      <div className="flex-1 bg-gradient-to-br from-primary/10 to-secondary/10 flex items-center justify-center p-8">
+      <div className="flex items-center justify-center flex-1 p-8 bg-gradient-to-br from-primary/10 to-secondary/10">
         <div className="w-full max-w-md">
-          <div className="w-full h-64 flex items-center justify-center">
+          <div className="flex items-center justify-center w-full h-64">
             <MascotWithAnimation
               staticImageSrc="/images/mascot.png"
               alt="Friendly mascot character"
@@ -221,7 +231,7 @@ export default function OnboardingFlow({
               <Card className="p-8 text-center">
                 <CardContent className="space-y-6">
                   <h1 className="text-3xl font-bold text-balance">Welcome to Your Wellbeing Journey</h1>
-                  <p className="text-muted-foreground text-lg text-balance">
+                  <p className="text-lg text-muted-foreground text-balance">
                     Let's get to know you better so we can provide personalized support for your mental health.
                   </p>
                   <Button onClick={nextStep} size="lg" className="w-full">
@@ -290,7 +300,7 @@ export default function OnboardingFlow({
                         key={gender}
                         variant={profile.gender === gender ? "default" : "outline"}
                         onClick={() => updateProfile({ gender })}
-                        className="justify-start text-left h-auto p-4"
+                        className="justify-start h-auto p-4 text-left"
                       >
                         {gender}
                       </Button>
@@ -396,9 +406,9 @@ export default function OnboardingFlow({
                         key={mood.value}
                         variant={profile.mood === mood.value ? "default" : "outline"}
                         onClick={() => updateProfile({ mood: mood.value })}
-                        className="justify-start text-left h-auto p-4"
+                        className="justify-start h-auto p-4 text-left"
                       >
-                        <span className="text-2xl mr-3">{mood.emoji}</span>
+                        <span className="mr-3 text-2xl">{mood.emoji}</span>
                         {mood.label}
                       </Button>
                     ))}
@@ -500,7 +510,7 @@ export default function OnboardingFlow({
                           key={option.value}
                           variant={objectiveAnswers[currentQuestionIndex] === option.value ? "default" : "outline"}
                           onClick={() => handleObjectiveAnswer(currentQuestionIndex, option.value)}
-                          className="w-full justify-start text-left h-auto p-4"
+                          className="justify-start w-full h-auto p-4 text-left"
                         >
                           {option.label}
                         </Button>
@@ -593,8 +603,8 @@ export default function OnboardingFlow({
                   <h2 className="text-2xl font-semibold text-balance">Assessment Complete!</h2>
 
                   <div className="space-y-4">
-                    <div className="p-4 bg-muted/50 rounded-lg">
-                      <h3 className="font-semibold mb-2">Your Profile</h3>
+                    <div className="p-4 rounded-lg bg-muted/50">
+                      <h3 className="mb-2 font-semibold">Your Profile</h3>
                       <p>
                         <strong>Name:</strong> {profile.name} ({profile.nickname})
                       </p>
@@ -610,8 +620,8 @@ export default function OnboardingFlow({
                     </div>
 
                     {profile.assessmentType === "objective" && scores && (
-                      <div className="p-4 bg-muted/50 rounded-lg">
-                        <h3 className="font-semibold mb-2">Assessment Results</h3>
+                      <div className="p-4 rounded-lg bg-muted/50">
+                        <h3 className="mb-2 font-semibold">Assessment Results</h3>
                         <div className="space-y-2 text-sm">
                           <p>
                             <strong>Depression:</strong> {getScoreLabel(scores.depressionScore, 6)} (
@@ -628,8 +638,8 @@ export default function OnboardingFlow({
                     )}
 
                     {profile.assessmentType === "subjective" && (
-                      <div className="p-4 bg-muted/50 rounded-lg">
-                        <h3 className="font-semibold mb-2">Your Responses</h3>
+                      <div className="p-4 rounded-lg bg-muted/50">
+                        <h3 className="mb-2 font-semibold">Your Responses</h3>
                         <p className="text-sm text-muted-foreground">
                           Thank you for sharing your thoughts. We'll use this information to provide personalized
                           support.
@@ -637,7 +647,7 @@ export default function OnboardingFlow({
                       </div>
                     )}
 
-                    <div className="p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
+                    <div className="p-4 border border-yellow-200 rounded-lg bg-yellow-50">
                       <p className="text-sm text-yellow-800">
                         <strong>Disclaimer:</strong> This assessment is for informational purposes only and is not
                         intended for diagnosis. Please consult with a healthcare professional for proper evaluation and
@@ -672,22 +682,22 @@ export default function OnboardingFlow({
   }
 
   return (
-    <div className="min-h-screen bg-background flex flex-col">
+    <div className="flex flex-col min-h-screen bg-gradient-to-br from-slate-50 via-white to-indigo-50">
       {/* Progress Bar */}
-      <div className="p-4 border-b">
+      <div className="sticky top-0 z-50 p-6 border-b shadow-sm bg-white/80 backdrop-blur-lg border-slate-200/50">
         <div className="max-w-4xl mx-auto">
           <div className="flex items-center justify-between mb-2">
-            <span className="text-sm text-muted-foreground">
+            <span className="text-sm font-semibold text-indigo-600">
               Step {currentStep} of {totalSteps}
             </span>
-            <span className="text-sm text-muted-foreground">{Math.round((currentStep / totalSteps) * 100)}%</span>
+            <span className="text-sm font-semibold text-indigo-600">{Math.round((currentStep / totalSteps) * 100)}%</span>
           </div>
-          <Progress value={(currentStep / totalSteps) * 100} className="h-2" />
+          <Progress value={(currentStep / totalSteps) * 100} className="h-3 overflow-hidden rounded-full bg-slate-200" />
         </div>
       </div>
 
       {/* Main Content */}
-      <div className="flex-1 flex flex-col lg:flex-row">
+      <div className="flex flex-col flex-1 lg:flex-row">
         {/* Mascot Area */}
         <div className="lg:w-1/2">{renderMascotArea()}</div>
 

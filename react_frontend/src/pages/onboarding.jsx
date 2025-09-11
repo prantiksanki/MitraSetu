@@ -169,7 +169,47 @@ function getScoreLabel(score, maxScore) {
 
 function MascotWithAnimation({ className = "" }) {
   const [isHovered, setIsHovered] = useState(false)
-  const [imageError, setImageError] = useState(false)
+  const [fallbackToImage, setFallbackToImage] = useState(false)
+  const containerRef = useRef(null)
+  const lottieInstanceRef = useRef(null)
+
+  useEffect(() => {
+    let isMounted = true
+    const load = async () => {
+      try {
+        // Load lottie-web from CDN only if not already present
+        if (!window.lottie) {
+          await new Promise((resolve, reject) => {
+            const script = document.createElement('script')
+            script.src = 'https://cdnjs.cloudflare.com/ajax/libs/lottie-web/5.12.2/lottie.min.js'
+            script.async = true
+            script.onload = resolve
+            script.onerror = reject
+            document.body.appendChild(script)
+          })
+        }
+        if (!isMounted) return
+        if (containerRef.current && window.lottie) {
+          lottieInstanceRef.current = window.lottie.loadAnimation({
+            container: containerRef.current,
+            renderer: 'svg',
+            loop: true,
+            autoplay: true,
+            path: '/animations/mascot-hover.json',
+          })
+        }
+      } catch (err) {
+        setFallbackToImage(true)
+      }
+    }
+    load()
+    return () => {
+      isMounted = false
+      try {
+        lottieInstanceRef.current?.destroy()
+      } catch {}
+    }
+  }, [])
 
   return (
     <div
@@ -177,32 +217,23 @@ function MascotWithAnimation({ className = "" }) {
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >
-      {!imageError ? (
+      {fallbackToImage ? (
         <img
           src="/mascot.png"
-          alt="MitraSetu friendly mascot character"
-          className={`w-48 h-48 object-contain transition-all duration-500 ease-out ${
-            isHovered 
-              ? "scale-110 drop-shadow-2xl" 
-              : "scale-100 drop-shadow-xl hover:animate-pulse"
+          alt="MitraSetu mascot"
+          className={`w-64 h-64 md:w-72 md:h-72 object-contain transition-all duration-500 ease-out ${
+            isHovered ? 'scale-110' : 'scale-100 hover:animate-pulse'
           }`}
-          onError={() => setImageError(true)}
         />
       ) : (
         <div
-          className={`w-48 h-48 bg-gradient-to-br from-indigo-400 via-purple-400 to-pink-400 rounded-full flex items-center justify-center transition-all duration-500 ease-out ${
-            isHovered ? "scale-110 drop-shadow-2xl rotate-12" : "scale-100 drop-shadow-xl"
+          ref={containerRef}
+          className={`w-64 h-64 md:w-72 md:h-72 transition-transform duration-500 bg-transparent ${
+            isHovered ? 'scale-110' : 'scale-100'
           }`}
-        >
-          <div className="flex flex-col items-center justify-center p-6 bg-white shadow-lg rounded-2xl">
-            <div className="flex mb-2 space-x-2">
-              <div className="w-3 h-3 rounded-full bg-slate-800 animate-pulse"></div>
-              <div className="w-3 h-3 delay-100 rounded-full bg-slate-800 animate-pulse"></div>
-            </div>
-            <div className="w-8 h-2 mt-1 rounded-full bg-slate-600"></div>
-            <div className="mt-2 text-xs font-medium text-slate-600">MitrAI</div>
-          </div>
-        </div>
+          style={{ background: 'transparent' }}
+          aria-label="MitraSetu mascot animation"
+        />
       )}
     </div>
   )
