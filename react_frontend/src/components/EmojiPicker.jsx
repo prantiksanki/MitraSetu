@@ -1,4 +1,5 @@
 import React from 'react';
+import { Twemoji } from './Twemoji';
 
 const EmojiPicker = ({ onSelect }) => {
   const emojis = [
@@ -23,7 +24,7 @@ const EmojiPicker = ({ onSelect }) => {
             onClick={() => onSelect(emoji)}
             className="p-2 text-lg transition-colors duration-200 rounded-lg hover:bg-gray-100"
           >
-            {emoji}
+            <Twemoji>{emoji}</Twemoji>
           </button>
         ))}
       </div>

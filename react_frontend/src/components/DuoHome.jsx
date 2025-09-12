@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { Nav } from './nav'
 import { useNavigate } from 'react-router-dom'
 import { MessageCircle, Users, Heart, ChevronRight, Calendar, TrendingUp, Flame, Star, ThumbsUp } from 'lucide-react'
+import { Twemoji } from './Twemoji'
 
 // Light palette
 const colors = {
@@ -49,9 +50,9 @@ export default function DuoHome() {
   const [isFloating, setIsFloating] = useState(true)
   const [showMessage, setShowMessage] = useState(false)
   const floatMessages = [
-    { emoji: '🌿', message: 'Every step counts on your wellness journey!' },
-    { emoji: '💫', message: 'Progress over perfection. You are doing great.' },
-    { emoji: '✨', message: 'One kind breath can change the moment.' },
+    { emoji: <Twemoji>🌿</Twemoji>, message: 'Every step counts on your wellness journey!' },
+    { emoji: <Twemoji>💫</Twemoji>, message: 'Progress over perfection. You are doing great.' },
+    { emoji: <Twemoji>✨</Twemoji>, message: 'One kind breath can change the moment.' },
   ]
   const [msgIdx, setMsgIdx] = useState(0)
   const currentMessage = floatMessages[msgIdx]
@@ -92,7 +93,7 @@ export default function DuoHome() {
     { emoji: '😔', label: 'Low', color: 'bg-purple-500' },
     { emoji: '😢', label: 'Struggling', color: 'bg-rose-500' }
   ]
-
+  console.log('Moods array:', moods);
   const moodData = [
     { day: 'Mon', mood: 10, color: 'bg-blue-400' },
     { day: 'Tue', mood: 7, color: 'bg-emerald-400' },
@@ -161,18 +162,26 @@ export default function DuoHome() {
   return (
     <div className={`${colors.bg} ${colors.text} min-h-screen`}>
       <Nav />
-      <DashboardMascotOverlay position={position} isFloating={isFloating} showMessage={showMessage} currentMessage={currentMessage} handleMascotClick={handleMascotClick} mascotImage={mascotImage} />
-      <main className="px-6 pt-6 mx-auto md:pl-64 max-w-7xl">
+      <main className="px-6 pt-6 mx-auto md:pl-64 max-w-7xl relative">
+        <DashboardMascotOverlay position={position} setPosition={setPosition} isFloating={isFloating} showMessage={showMessage} currentMessage={currentMessage} handleMascotClick={handleMascotClick} mascotImage={mascotImage} />
         <div className="grid grid-cols-1 lg:grid-cols-[1.25fr_300px] gap-5">
           {/* Center content - all features from MentalHealthHome with new skin */}
-          <section className={`rounded-2xl ${colors.card} border ${colors.border} p-6 relative overflow-hidden`}>
+          <section className={`rounded-2xl ${colors.card} border ${colors.border} p-6 relative overflow-hidden z-[59]`}>
             {/* Mascot image floating in the background */}
             <img src="/mascot.png" alt="MitraSetu mascot" className="absolute hidden w-64 pointer-events-none select-none md:block -right-16 -top-20 opacity-10" />
 
             {/* Welcome strip (Duolingo-like pill) */}
-            <div className="mb-6">
-              <div className={`inline-flex items-center gap-2 px-3 py-1 rounded-full text-sm ${colors.grad} text-[#0E1117] font-semibold`}>Good {currentTime.getHours() < 12 ? 'Morning' : currentTime.getHours() < 18 ? 'Afternoon' : 'Evening'}! 👋</div>
-              <h2 className="mt-3 text-xl font-semibold">How are you feeling today?</h2>
+            <div className="mb-6 flex flex-col items-center">
+              <div
+                className="inline-flex items-center gap-3 px-6 py-2 rounded-full shadow-xl bg-gradient-to-r from-[#A258FF] via-[#FF62C0] to-[#2EA8FF]"
+                style={{ boxShadow: '0 0 32px 0 #A258FF55, 0 0 16px 0 #2EA8FF33' }}
+              >
+                <span className="text-4xl font-extrabold text-white drop-shadow-lg tracking-tight">
+                  Good {currentTime.getHours() < 12 ? 'Morning' : currentTime.getHours() < 18 ? 'Afternoon' : 'Evening'}!
+                </span>
+                <span className="text-3xl"><Twemoji>👋</Twemoji></span>
+              </div>
+              <h2 className="mt-5 text-2xl font-semibold text-gray-900">How are you feeling today?</h2>
             </div>
 
             {/* Today's check-in (moods) */}
@@ -181,13 +190,30 @@ export default function DuoHome() {
                 <div className="flex items-center gap-2"><Calendar size={18} className="text-[#7FB3FF]" /><span className="font-semibold">Today's Check-in</span></div>
                 <span className={`text-sm ${colors.sub}`}>{currentTime.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })}</span>
               </div>
+              {/* DEBUG: Show selected mood */}
+              <div className="mb-2 text-center">
+                <span className="text-lg font-bold text-indigo-600">{selectedMood ? `Selected: ` : 'No mood selected'}{selectedMood && <Twemoji>{selectedMood.emoji}</Twemoji>} {selectedMood?.label}</span>
+              </div>
               <div className="grid grid-cols-2 gap-3 sm:grid-cols-5">
-                {moods.map((m, i) => (
-                  <button key={i} onClick={() => setSelectedMood(m)} className={`group relative p-4 rounded-xl border ${colors.border} ${selectedMood?.label===m.label? m.color+' text-white':'hover:bg-[#161C28]'} transition`}> 
-                    <div className="mb-1 text-2xl">{m.emoji}</div>
-                    <div className={`text-xs ${selectedMood?.label===m.label?'text-white':colors.sub}`}>{m.label}</div>
-                  </button>
-                ))}
+                {moods.map((m, i) => {
+                  const isSelected = selectedMood?.label === m.label;
+                  return (
+                    <button
+                      key={i}
+                      onClick={() => {
+                        console.log('Mood selected:', m.label);
+                        setSelectedMood(m);
+                      }}
+                      className={`group relative p-4 rounded-xl border transition 
+                        ${isSelected ? `${m.color} text-white border-2 border-indigo-500` : `${colors.card} ${colors.border} hover:bg-[#161C28]`} 
+                      `}
+                      style={isSelected ? { boxShadow: '0 0 0 2px #6366f1, 0 2px 8px #6366f133' } : {}}
+                    >
+                      <div className="mb-1 text-2xl"><Twemoji>{m.emoji}</Twemoji></div>
+                      <div className={`text-xs ${isSelected ? 'text-white' : colors.sub}`}>{m.label}</div>
+                    </button>
+                  );
+                })}
               </div>
             </div>
 
@@ -369,49 +395,102 @@ function FeedCard({ id, title, content, like, onToggleLike, comments = [], onAdd
 
 // Floating mascot overlay for dashboard
 export function DashboardMascotOverlay({ position, isFloating, showMessage, currentMessage, handleMascotClick, mascotImage }) {
+  // Draggable mascot logic
+  const [dragging, setDragging] = React.useState(false);
+  const [dragOffset, setDragOffset] = React.useState({ x: 0, y: 0 });
+  const mascotRef = React.useRef();
+
+  // Accept setPosition from parent
+  const { setPosition } = arguments[0];
+
+  const handleDragStart = (e) => {
+    setDragging(true);
+    const clientX = e.type === 'touchstart' ? e.touches[0].clientX : e.clientX;
+    const clientY = e.type === 'touchstart' ? e.touches[0].clientY : e.clientY;
+    setDragOffset({
+      x: clientX - position.x,
+      y: clientY - position.y
+    });
+  };
+  const handleDragEnd = () => setDragging(false);
+  const handleDrag = (e) => {
+    if (!dragging) return;
+    const clientX = e.type === 'touchmove' ? e.touches[0].clientX : e.clientX;
+    const clientY = e.type === 'touchmove' ? e.touches[0].clientY : e.clientY;
+    const newX = clientX - dragOffset.x;
+    const newY = clientY - dragOffset.y;
+    // Clamp to window
+    const clampedX = Math.max(0, Math.min(window.innerWidth - 100, newX));
+    const clampedY = Math.max(0, Math.min(window.innerHeight - 100, newY));
+    if (typeof position.x === 'number' && typeof position.y === 'number') {
+      setPosition({ x: clampedX, y: clampedY });
+    }
+  };
+
+  React.useEffect(() => {
+    if (dragging) {
+      window.addEventListener('mousemove', handleDrag);
+      window.addEventListener('touchmove', handleDrag);
+      window.addEventListener('mouseup', handleDragEnd);
+      window.addEventListener('touchend', handleDragEnd);
+    } else {
+      window.removeEventListener('mousemove', handleDrag);
+      window.removeEventListener('touchmove', handleDrag);
+      window.removeEventListener('mouseup', handleDragEnd);
+      window.removeEventListener('touchend', handleDragEnd);
+    }
+    return () => {
+      window.removeEventListener('mousemove', handleDrag);
+      window.removeEventListener('touchmove', handleDrag);
+      window.removeEventListener('mouseup', handleDragEnd);
+      window.removeEventListener('touchend', handleDragEnd);
+    };
+  }, [dragging]);
+
   return (
-    <div className="fixed inset-0 pointer-events-none z-[60] opacity-85">
+    <motion.div
+      ref={mascotRef}
+      className="absolute z-[60] cursor-grab pointer-events-none"
+      animate={{ x: position.x, y: position.y, rotate: isFloating ? [0, 2, -2, 0] : 0 }}
+      transition={{ x: { type: 'spring', stiffness: 50, damping: 15, duration: 3 }, y: { type: 'spring', stiffness: 50, damping: 15, duration: 3 }, rotate: { duration: 4, ease: 'easeInOut', repeat: Infinity } }}
+      style={{ width: 100, height: 100 }}
+    >
       <motion.div
-        className="absolute cursor-pointer pointer-events-auto"
-        animate={{ x: position.x, y: position.y, rotate: isFloating ? [0, 2, -2, 0] : 0 }}
-        transition={{ x: { type: 'spring', stiffness: 50, damping: 15, duration: 3 }, y: { type: 'spring', stiffness: 50, damping: 15, duration: 3 }, rotate: { duration: 4, ease: 'easeInOut', repeat: Infinity } }}
-        style={{ width: 100, height: 100 }}
+        className="absolute inset-0 rounded-full bg-gradient-to-r from-purple-300 to-pink-300 blur-xl opacity-30 pointer-events-none"
+        animate={{ scale: [1, 1.2, 1], opacity: [0.3, 0.5, 0.3] }}
+        transition={{ duration: 3, repeat: Infinity, ease: 'easeInOut' }}
+      />
+      <motion.div
+        className="relative z-10 pointer-events-auto"
+        animate={{ scale: showMessage ? [1, 1.15, 1.05] : [1, 1.05, 1], y: [0, -5, 0] }}
+        transition={{ scale: { duration: 0.6, ease: 'easeInOut', repeat: showMessage ? 2 : Infinity }, y: { duration: 2.5, ease: 'easeInOut', repeat: Infinity } }}
+        whileHover={{ scale: 1.1 }}
+        whileTap={{ scale: 0.95 }}
         onClick={handleMascotClick}
+        onMouseDown={handleDragStart}
+        onTouchStart={handleDragStart}
       >
-        <motion.div
-          className="absolute inset-0 rounded-full bg-gradient-to-r from-purple-300 to-pink-300 blur-xl opacity-30"
-          animate={{ scale: [1, 1.2, 1], opacity: [0.3, 0.5, 0.3] }}
-          transition={{ duration: 3, repeat: Infinity, ease: 'easeInOut' }}
-        />
-        <motion.div
-          className="relative z-10"
-          animate={{ scale: showMessage ? [1, 1.15, 1.05] : [1, 1.05, 1], y: [0, -5, 0] }}
-          transition={{ scale: { duration: 0.6, ease: 'easeInOut', repeat: showMessage ? 2 : Infinity }, y: { duration: 2.5, ease: 'easeInOut', repeat: Infinity } }}
-          whileHover={{ scale: 1.1 }}
-          whileTap={{ scale: 0.95 }}
-        >
-          <img src={mascotImage} alt="MitraSetu Mascot" className="w-24 h-24 drop-shadow-2xl" />
-          <motion.div className="absolute text-yellow-400 -top-2 -right-2" animate={{ scale: [0, 1, 0], rotate: [0, 180, 360] }} transition={{ duration: 2, repeat: Infinity, delay: 1 }}>✨</motion.div>
-          <motion.div className="absolute text-pink-400 -bottom-1 -left-2" animate={{ scale: [0, 1, 0], rotate: [0, -180, -360] }} transition={{ duration: 2, repeat: Infinity, delay: 0.5 }}>💫</motion.div>
-        </motion.div>
-        <AnimatePresence>
-          {showMessage && currentMessage && (
-            <motion.div initial={{ opacity: 0, scale: 0.5, y: 20 }} animate={{ opacity: 1, scale: 1, y: 0 }} exit={{ opacity: 0, scale: 0.5, y: 20 }} className="absolute transform -translate-x-1/2 -top-20 left-1/2 min-w-64 max-w-80">
-              <div className="relative p-4 border-2 shadow-2xl bg-gradient-to-br from-white/95 to-purple-50/95 backdrop-blur-md border-purple-200/50 rounded-3xl">
-                <div className="flex items-start gap-2">
-                  <span className="text-lg">{currentMessage.emoji}</span>
-                  <p className="text-sm leading-relaxed text-purple-800">{currentMessage.message}</p>
-                </div>
-                <div className="absolute bottom-0 transform -translate-x-1/2 translate-y-1/2 left-1/2">
-                  <div className="w-4 h-4 rotate-45 border-b-2 border-r-2 bg-gradient-to-br from-white/95 to-purple-50/95 border-purple-200/50" />
-                </div>
-                <motion.div className="absolute text-pink-400 -top-2 -right-2" animate={{ y: [0, -10, 0], opacity: [0.5, 1, 0.5] }} transition={{ duration: 1.5, repeat: Infinity }}>💖</motion.div>
-              </div>
-            </motion.div>
-          )}
-        </AnimatePresence>
+        <img src={mascotImage} alt="MitraSetu Mascot" className="w-24 h-24 drop-shadow-2xl" draggable={false} />
+        <motion.div className="absolute text-yellow-400 -top-2 -right-2" animate={{ scale: [0, 1, 0], rotate: [0, 180, 360] }} transition={{ duration: 2, repeat: Infinity, delay: 1 }}>✨</motion.div>
+        <motion.div className="absolute text-pink-400 -bottom-1 -left-2" animate={{ scale: [0, 1, 0], rotate: [0, -180, -360] }} transition={{ duration: 2, repeat: Infinity, delay: 0.5 }}>💫</motion.div>
       </motion.div>
-    </div>
+      <AnimatePresence>
+        {showMessage && currentMessage && (
+          <motion.div initial={{ opacity: 0, scale: 0.5, y: 20 }} animate={{ opacity: 1, scale: 1, y: 0 }} exit={{ opacity: 0, scale: 0.5, y: 20 }} className="absolute transform -translate-x-1/2 -top-20 left-1/2 min-w-64 max-w-80 pointer-events-auto">
+            <div className="relative p-4 border-2 shadow-2xl bg-gradient-to-br from-white/95 to-purple-50/95 backdrop-blur-md border-purple-200/50 rounded-3xl">
+              <div className="flex items-start gap-2">
+                <span className="text-lg">{currentMessage.emoji}</span>
+                <p className="text-sm leading-relaxed text-purple-800">{currentMessage.message}</p>
+              </div>
+              <div className="absolute bottom-0 transform -translate-x-1/2 translate-y-1/2 left-1/2">
+                <div className="w-4 h-4 rotate-45 border-b-2 border-r-2 bg-gradient-to-br from-white/95 to-purple-50/95 border-purple-200/50" />
+              </div>
+              <motion.div className="absolute text-pink-400 -top-2 -right-2" animate={{ y: [0, -10, 0], opacity: [0.5, 1, 0.5] }} transition={{ duration: 1.5, repeat: Infinity }}>💖</motion.div>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </motion.div>
   )
 }
 

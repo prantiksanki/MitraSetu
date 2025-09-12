@@ -326,7 +326,7 @@ export default function OnboardingFlow({
                     <SelectTrigger className="text-lg">
                       <SelectValue placeholder="Select your state" />
                     </SelectTrigger>
-                    <SelectContent>
+                    <SelectContent className="z-[60]">
                       {INDIAN_STATES.map((state) => (
                         <SelectItem key={state} value={state}>
                           {state}
@@ -354,7 +354,7 @@ export default function OnboardingFlow({
                     <SelectTrigger className="text-lg">
                       <SelectValue placeholder="Select your language" />
                     </SelectTrigger>
-                    <SelectContent>
+                    <SelectContent className="z-[60]">
                       {LANGUAGES.map((language) => (
                         <SelectItem key={language} value={language}>
                           {language}
@@ -684,15 +684,15 @@ export default function OnboardingFlow({
   return (
     <div className="flex flex-col min-h-screen bg-gradient-to-br from-slate-50 via-white to-indigo-50">
       {/* Progress Bar */}
-      <div className="sticky top-0 z-50 p-6 border-b shadow-sm bg-white/80 backdrop-blur-lg border-slate-200/50">
-        <div className="max-w-4xl mx-auto">
+      <div className="sticky top-0 z-40 p-4 md:p-6 border-b shadow-sm bg-white/80 backdrop-blur-lg border-slate-200/50 pointer-events-none">
+        <div className="max-w-4xl mx-auto pointer-events-auto">
           <div className="flex items-center justify-between mb-2">
             <span className="text-sm font-semibold text-indigo-600">
               Step {currentStep} of {totalSteps}
             </span>
             <span className="text-sm font-semibold text-indigo-600">{Math.round((currentStep / totalSteps) * 100)}%</span>
           </div>
-          <Progress value={(currentStep / totalSteps) * 100} className="h-3 overflow-hidden rounded-full bg-slate-200" />
+          <Progress value={(currentStep / totalSteps) * 100} className="h-2 md:h-3 overflow-hidden rounded-full bg-slate-200" />
         </div>
       </div>
 

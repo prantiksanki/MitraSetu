@@ -116,8 +116,22 @@ export default function VoiceConversationModal({ open, onClose, dark=false }) {
         if (text) {
           addMessage({ role:'user', text, timestamp: new Date().toLocaleTimeString() });
           setTranscript(prev => prev + (prev? '\n':'') + text);
-          // Placeholder AI echo (replace with real backend call if desired)
-          setTimeout(()=> addMessage({ role:'ai', text: `I hear you: ${text}`, timestamp: new Date().toLocaleTimeString() }), 400);
+            // Call Gemini API for AI response
+            fetch('https://generativelanguage.googleapis.com/v1beta/models/gemini2.5-flash:generateContent?key=' + process.env.NEXT_PUBLIC_GEMINI_API_KEY, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              contents: [{ parts: [{ text }] }]
+            })
+            })
+            .then(res => res.json())
+            .then(data => {
+            const aiText = data?.candidates?.[0]?.content?.parts?.[0]?.text || 'Sorry, I could not understand.';
+            addMessage({ role:'ai', text: aiText, timestamp: new Date().toLocaleTimeString() });
+            })
+            .catch(() => {
+            addMessage({ role:'ai', text: 'Error contacting Gemini API.', timestamp: new Date().toLocaleTimeString() });
+            });
         }
       }
       setInterim(interimStr);

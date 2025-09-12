@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { Users, Send, Smile, ArrowLeft, Copy, Check } from 'lucide-react';
 import EmojiPicker from './EmojiPicker';
 import MarkdownMessage from './MarkdownMessage';
+import { Twemoji } from './Twemoji';
 
 const Chat = ({ socket, roomId, onLeaveRoom }) => {
   const [messages, setMessages] = useState([]);
@@ -16,10 +17,10 @@ const Chat = ({ socket, roomId, onLeaveRoom }) => {
   const messagesEndRef = useRef(null);
   const emojiPickerRef = useRef(null);
   const quickReplies = [
-    'I need help coping with stress',
-    'Give me a breathing exercise',
-    'Share a positive affirmation',
-    'How can I improve focus?'
+    { text: 'I need help coping with stress', emoji: '😔' },
+    { text: 'Give me a breathing exercise', emoji: '🌿' },
+    { text: 'Share a positive affirmation', emoji: '✨' },
+    { text: 'How can I improve focus?', emoji: '💫' }
   ]
 
   useEffect(() => {
@@ -227,8 +228,8 @@ const Chat = ({ socket, roomId, onLeaveRoom }) => {
   }
 
   return (
-    <div className="flex items-stretch justify-center w-full h-full p-0 text-gray-900 bg-gray-50">
-      <div className="flex-1 w-full flex flex-col h-[calc(100vh-7rem)] bg-white border-x border-gray-200">
+    <div className="flex items-stretch w-full h-full text-gray-900 bg-gray-50">
+      <div className="flex-1 w-full flex flex-col h-[100vh] bg-white border-x border-gray-200">
         {/* Header */}
         <div className="px-4 py-3 bg-white border-b border-gray-200">
           <div className="flex items-center justify-between">
@@ -315,7 +316,13 @@ const Chat = ({ socket, roomId, onLeaveRoom }) => {
         <div className="px-4 pt-2 bg-white border-t border-gray-200">
           <div className="flex flex-wrap gap-2 pb-2">
             {quickReplies.map((q) => (
-              <button key={q} onClick={()=>setInput(q)} className="px-2 py-1 text-xs font-medium border border-gray-200 rounded-full bg-gray-50 hover:bg-gray-100">{q}</button>
+              <button
+                key={q.text}
+                onClick={() => setInput(q.text)}
+                className="px-2 py-1 text-xs font-medium border border-gray-200 rounded-full bg-gray-50 hover:bg-gray-100"
+              >
+                <Twemoji>{q.emoji}</Twemoji> {q.text}
+              </button>
             ))}
           </div>
           {/* Input */}
