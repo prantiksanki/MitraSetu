@@ -10,6 +10,7 @@ import { Textarea } from "@/components/ui/textarea"
 import { Progress } from "@/components/ui/progress"
 import { cn } from "@/lib/utils"
 import { useNavigate } from "react-router-dom"
+import { Twemoji } from '@/components/Twemoji';
 
 const INDIAN_STATES = [
   "Andhra Pradesh",
@@ -139,16 +140,16 @@ const SUBJECTIVE_PROMPTS = [
 ]
 
 const MOOD_OPTIONS = [
-  { emoji: "😄", label: "Excellent", value: "excellent", color: "from-green-400 to-emerald-500" },
-  { emoji: "😊", label: "Good", value: "good", color: "from-blue-400 to-cyan-500" },
-  { emoji: "😐", label: "Okay", value: "okay", color: "from-yellow-400 to-orange-500" },
-  { emoji: "😔", label: "Not Great", value: "not-great", color: "from-orange-400 to-red-500" },
-  { emoji: "😰", label: "Struggling", value: "struggling", color: "from-red-400 to-pink-500" },
+  { emoji: <Twemoji>😄</Twemoji>, label: 'Excellent', value: 'excellent', color: 'from-green-400 to-emerald-500' },
+  { emoji: <Twemoji>😊</Twemoji>, label: 'Good', value: 'good', color: 'from-blue-400 to-cyan-500' },
+  { emoji: <Twemoji>😐</Twemoji>, label: 'Okay', value: 'okay', color: 'from-yellow-400 to-orange-500' },
+  { emoji: <Twemoji>😔</Twemoji>, label: 'Not Great', value: 'not-great', color: 'from-orange-400 to-red-500' },
+  { emoji: <Twemoji>😰</Twemoji>, label: 'Struggling', value: 'struggling', color: 'from-red-400 to-pink-500' },
 ]
 
 const GENDER_OPTIONS = [
-  { label: "Male", icon: "👨" },
-  { label: "Female", icon: "👩" },
+  { label: 'Male', icon: <Twemoji>👨</Twemoji> },
+  { label: 'Female', icon: <Twemoji>👩</Twemoji> },
   { label: "Non-binary", icon: "🧑" },
   { label: "Prefer not to say", icon: "❓" }
 ]
@@ -474,7 +475,7 @@ export default function OnboardingFlow({ onComplete, redirectPath = "/home" }) {
                   <SelectTrigger className="text-lg border-2 h-14 border-slate-200 focus:border-indigo-400 focus:ring-indigo-200 rounded-xl">
                     <SelectValue placeholder="Choose your state" />
                   </SelectTrigger>
-                  <SelectContent className="rounded-xl">
+                  <SelectContent className="rounded-xl z-[60]">
                     {INDIAN_STATES.map((state) => (
                       <SelectItem key={state} value={state} className="py-3 text-base rounded-lg">
                         {state}
@@ -507,7 +508,7 @@ export default function OnboardingFlow({ onComplete, redirectPath = "/home" }) {
                   <SelectTrigger className="text-lg border-2 h-14 border-slate-200 focus:border-indigo-400 focus:ring-indigo-200 rounded-xl">
                     <SelectValue placeholder="Select your language" />
                   </SelectTrigger>
-                  <SelectContent className="rounded-xl">
+                  <SelectContent className="rounded-xl z-[60]">
                     {LANGUAGES.map((language) => (
                       <SelectItem key={language} value={language} className="py-3 text-base rounded-lg">
                         {language}
@@ -930,8 +931,8 @@ export default function OnboardingFlow({ onComplete, redirectPath = "/home" }) {
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-indigo-50">
       {/* Progress Bar */}
-      <div className="sticky top-0 z-50 p-6 border-b shadow-sm bg-white/80 backdrop-blur-lg border-slate-200/50">
-        <div className="max-w-2xl mx-auto">
+  <div className="sticky top-0 z-30 p-4 border-b shadow-sm pointer-events-none md:p-6 bg-white/80 backdrop-blur-lg border-slate-200/50">
+        <div className="max-w-2xl mx-auto pointer-events-auto">
           <div className="flex items-center justify-between mb-4">
             <span className="text-sm font-semibold text-indigo-600">
               Step {currentStep} of {totalSteps}
@@ -942,7 +943,7 @@ export default function OnboardingFlow({ onComplete, redirectPath = "/home" }) {
           </div>
           <Progress 
             value={(currentStep / totalSteps) * 100} 
-            className="h-3 overflow-hidden rounded-full bg-slate-200"
+            className="h-2 overflow-hidden rounded-full md:h-3 bg-slate-200"
           />
         </div>
       </div>
@@ -957,7 +958,7 @@ export default function OnboardingFlow({ onComplete, redirectPath = "/home" }) {
             </div>
             <div className="space-y-4 text-center">
               <div className="inline-flex items-center justify-center px-4 py-2 text-sm font-medium text-indigo-800 bg-indigo-100 rounded-full">
-                MitrAI Assistant
+                Metoo Assistant ( MitrAI )
               </div>
               <p className="text-lg font-medium leading-relaxed text-slate-700">
                 {currentStep === 1 &&

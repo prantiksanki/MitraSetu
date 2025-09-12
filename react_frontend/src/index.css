@@ -55,3 +55,11 @@ code {
   margin: 0 .05em 0 .1em;
   vertical-align: -0.1em;
 }
+
+/* Twemoji normalization for consistent emoji size */
+.twemoji-normal img.twemoji {
+  width: 1em !important;
+  height: 1em !important;
+  display: inline-block;
+  vertical-align: middle;
+}

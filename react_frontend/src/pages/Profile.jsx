@@ -137,6 +137,8 @@ export default function ProfilePage() {
                       <p className="leading-tight text-left text-purple-600 truncate">
                         {userProfile.state || 'Location not set'}
                       </p>
+                      <h1 className="text-2xl font-bold leading-tight text-left text-purple-900 truncate">Gargi Singh</h1>
+                      <p className="leading-tight text-left text-purple-600 truncate">Lucknow, Uttar Pradesh, India</p>
                   <div className="flex items-center mt-1 space-x-2">
                     <span className="text-sm text-purple-600">Nickname:</span>
                     <span className="text-purple-700 border border-purple-300 rounded px-2 py-0.5 text-xs">

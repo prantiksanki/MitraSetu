@@ -203,12 +203,12 @@ export const AIAssistant = ({ compact = false }) => {
       </aside>
       <div className="flex flex-col flex-1 min-w-0">
         {/* Header */}
-        <div className={`${isDarkMode ? "bg-gray-800/95 border-gray-700" : "bg-white/85 border-blue-200"} backdrop-blur border-b sticky top-24 z-20 w-full`}> 
+  <div className={`${isDarkMode ? "bg-gray-800/95 border-gray-700" : "bg-white/85 border-blue-200"} backdrop-blur border-b sticky top-0 z-20 w-full`}> 
           <div className="flex flex-col max-w-4xl gap-3 px-4 py-3 mx-auto">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-4">
                 <div>
-                  <h1 className="text-xl font-semibold">Caring AI Assistant</h1>
+                  <h1 className="text-xl font-semibold">Metoo | MitrAI Assistant</h1>
                   <div className="flex items-center gap-2 text-xs">
                     <span className='text-gray-500'>Text chat mode</span>
                   </div>
