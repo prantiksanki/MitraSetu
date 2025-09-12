@@ -9,6 +9,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Textarea } from "@/components/ui/textarea"
 import { Progress } from "@/components/ui/progress"
 import { cn } from "@/lib/utils"
+import { useNavigate } from "react-router-dom"
 
 const INDIAN_STATES = [
   "Andhra Pradesh",
@@ -240,6 +241,7 @@ function MascotWithAnimation({ className = "" }) {
 }
 
 export default function OnboardingFlow({ onComplete, redirectPath = "/home" }) {
+  const navigate = useNavigate()
   const [currentStep, setCurrentStep] = useState(1)
   const [isAnimating, setIsAnimating] = useState(false)
   const [profile, setProfile] = useState({})
@@ -308,6 +310,7 @@ export default function OnboardingFlow({ onComplete, redirectPath = "/home" }) {
     const finalProfile = {
       ...profile,
       onboardingComplete: true,
+      completedAt: new Date().toISOString(),
     }
 
     if (profile.assessmentType === "objective") {
@@ -322,7 +325,10 @@ export default function OnboardingFlow({ onComplete, redirectPath = "/home" }) {
       finalProfile.subjectiveAnswers = subjectiveAnswers
     }
 
-    // Store in memory instead of localStorage
+    // Store in localStorage for persistence
+    localStorage.setItem('userProfile', JSON.stringify(finalProfile))
+    
+    // Also call the onComplete callback if providedF
     onComplete?.(finalProfile)
   }
 
@@ -608,6 +614,7 @@ export default function OnboardingFlow({ onComplete, redirectPath = "/home" }) {
                   onClick={() => {
                     updateProfile({ onboardingComplete: true })
                     completeOnboarding()
+                    navigate('/home')
                   }}
                   className="w-full text-lg font-medium transition-all duration-300 border-2 h-14 border-slate-200 hover:border-indigo-300 hover:bg-indigo-50 rounded-xl"
                 >
